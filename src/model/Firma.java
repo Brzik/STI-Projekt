@@ -63,6 +63,8 @@ class Firma {
     public ArrayList getData(Date zacatek, Date konec) {
       return null;
       zkouska githabu
+              
+      druha zkouska githabu
     }
 
     /**
