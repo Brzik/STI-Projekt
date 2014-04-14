@@ -62,7 +62,6 @@ class Firma {
      */
     public ArrayList getData(Date zacatek, Date konec) {
       return null;
-      dasd
     }
 
     /**
