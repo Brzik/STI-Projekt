@@ -65,6 +65,7 @@ class Firma {
       zkouska githabu
               
       druha zkouska githabu
+              
     }
 
     /**
