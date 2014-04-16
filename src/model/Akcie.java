@@ -15,7 +15,7 @@ class Akcie {
     
     //odchylka aktuální ceny od denního maxima
     private double odchylkaMax;
-    blbost, to neni zadna odchylka ale max
+    //blbost, to neni zadna odchylka ale max
     //odchylka aktuální ceny od denního minima
     private double odchylkaMin;
     
