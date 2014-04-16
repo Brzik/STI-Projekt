@@ -19,7 +19,7 @@ class Parser implements IParser{
         //jeden radek ze souboru (jedna akcie)
         String radek;
         
-        //nastavení regularnoho vyrazu pro datum v souboru
+        //nastavení regularniho vyrazu pro datum v souboru
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         
         int i=0;
