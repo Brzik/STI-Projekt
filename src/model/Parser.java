@@ -24,7 +24,7 @@ class Parser implements IParser{
         
         int i=0;
         while((radek = br.readLine())!=null){
-            seznamDat = new ArrayList(5);
+            seznamDat = new ArrayList(7);
             
             //precteni jednoho radku (akcie) a rozparsovani radku na jednotliva data
             String[] radekSplit = new String[7];
@@ -37,6 +37,7 @@ class Parser implements IParser{
             seznamDat.add(3, Double.parseDouble(radekSplit[3]));
             seznamDat.add(4, Double.parseDouble(radekSplit[4]));
             seznamDat.add(5, Double.parseDouble(radekSplit[5]));
+            seznamDat.add(6, Integer.parseInt(radekSplit[6]));
             
             //vlozeni dat pro tuto akcii do seznamu akcii
             seznamAkcii.add(i, seznamDat);

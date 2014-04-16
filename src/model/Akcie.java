@@ -4,6 +4,8 @@ import java.util.Date;
 
 /**
  * Akcie uchovává informaci o akcii konkrétní firmy a <b>ke konkrétnímu datu</b>.
+ * 
+ * @author Jan Brzobohatý
  */
 class Akcie {
     
@@ -13,34 +15,39 @@ class Akcie {
     //datum, ke kterému byla akcie vypsána na burze
     private Date datum;
     
-    //odchylka aktuální ceny od denního maxima
+    //odchylka průměrné ceny od denního maxima
     private double odchylkaMax;
-    //blbost, to neni zadna odchylka ale max
-    //odchylka aktuální ceny od denního minima
+    
+    //odchylka průměrné ceny od denního minima
     private double odchylkaMin;
     
     //prumerna cena akcie za tento den
-    //(pocatecniHodnotaAkcie + koncovaHodnotaAkcie)/2
     private double prumernaCena;
     
-    //rozdíl mezi cenou akcie na začátku dne a na jeho konci
-    private double prumernyPropad;
+    //propad akcie k tomuto dni
+    private double propad;
+    
+    //objem akcie
+    private double objem;
 
     /**
      * Vytvoří akcii pro konkrétní firmu a ke konkrétnímu datu.
      * @param odchylkaMax odchylka aktuální ceny od denního maxima
      * @param odchylkaMin odchylka aktuální ceny od denního minima
-     * @param prumernaCena prumerna cena akcie za tento den (pocatecniHodnotaAkcie – koncovaHodnotaAkcie)/2
-     * @param prumernyPropad rozdíl mezi cenou akcie na začátku dne a na jeho konci
+     * @param prumernaCena prumerna cena akcie za tento den
+     * @param propad propad akcie za tento den
      * @param datum datum, ke kterému byla kacie vypsána
+     * @param zkratka zkratka názvu firmy
+     * @param objem objem akcie
      */
-    public Akcie(double odchylkaMax, double odchylkaMin, double prumernaCena, double prumernyPropad, Date datum, String zkratka) {
+    public Akcie(double odchylkaMax, double odchylkaMin, double prumernaCena, double propad, Date datum, String zkratka, int objem) {
         this.odchylkaMax = odchylkaMax;
         this.odchylkaMin = odchylkaMin;
         this.prumernaCena = prumernaCena;
-        this.prumernyPropad = prumernyPropad;
+        this.propad = propad;
         this.datum = datum;
         this.zkratka = zkratka;
+        this.objem = objem;
     }
     
     /**
@@ -51,14 +58,14 @@ class Akcie {
     }
 
     /**
-     * @return odchylka aktuální ceny od denního maxima 
+     * @return odchylka průměrné ceny od denního maxima 
      */
     public double getOdchylkaMax() {
       return odchylkaMax;
     }
 
     /**
-     * @return odchylka aktuální ceny od denního minima 
+     * @return odchylka průměrné ceny od denního minima 
      */
     public double getOdchylkaMin() {
       return odchylkaMin;
@@ -72,11 +79,10 @@ class Akcie {
     }
 
     /**
-     * @return prumerny propad akcie k tomuto dni 
-     * (rozdíl mezi cenou akcie na začátku dne a na jeho konci)
+     * @return propad akcie k tomuto dni 
      */
-    public double getPrumernyPropad() {
-      return prumernyPropad;
+    public double getPropad() {
+      return propad;
     }
 
     /**
@@ -84,5 +90,12 @@ class Akcie {
      */
     public Date getDatum() {
       return datum;
+    }
+
+    /**
+     * @return objem akcie
+     */
+    public double getObjem() {
+        return objem;
     }
 }

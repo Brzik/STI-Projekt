@@ -10,7 +10,7 @@ import java.util.ArrayList;
  * 
  * <h3>Kontrakt:</h3>
  * <p>Metoda musí vracet ArrayList jednotlivých akcií.
- * Každá akcie je reprezentována dalším ArrayListem, který obsahuje 6 hodnot.
+ * Každá akcie je reprezentována dalším ArrayListem, který obsahuje 7 hodnot.
  * <table>
  * <tr><th>index</th><th>hodnota</th><th>typ</th></tr>
  * <tr><th>0</th><th> zkratka firmy </th><th>String</th></tr>
@@ -19,8 +19,11 @@ import java.util.ArrayList;
  * <tr><th>3</th><th>zaviraci cena</th><th>double</th></tr>
  * <tr><th>4</th><th>maximální cena</th><th>double</th></tr>
  * <tr><th>5</th><th>minimalni cena</th><th>double</th></tr>
+ * <tr><th>6</th><th>objem akcie</th><th>int</th></tr>
  * </table>
  * </p>
+ * 
+ * @author Jan Brzobohatý
  */
 interface IParser {
     /**
@@ -29,7 +32,7 @@ interface IParser {
      * @param br BufferReader pro soubor, z kterého cheme parsovat
      * @return
      * <p>Metoda vrací ArrayList jednotlivých akcií.
-     * Každá akcie je reprezentována dalším ArrayListem, který obsahuje 6 hodnot.
+     * Každá akcie je reprezentována dalším ArrayListem, který obsahuje 7 hodnot.
      * <table>
      * <tr><th>index</th><th>hodnota</th><th>typ</th></tr>
      * <tr><th>0</th><th> zkratka firmy </th><th>String</th></tr>
@@ -38,6 +41,7 @@ interface IParser {
      * <tr><th>3</th><th>zaviraci cena</th><th>double</th></tr>
      * <tr><th>4</th><th>maximální cena</th><th>double</th></tr>
      * <tr><th>5</th><th>minimalni cena</th><th>double</th></tr>
+     * <tr><th>6</th><th>objem akcie</th><th>int</th></tr>
      * </table>
      * </p>
      * @throws IOException když nastane chyba při čtení ze souboru

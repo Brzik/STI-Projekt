@@ -7,6 +7,8 @@ package model;
 /**
  * DataException je výjimka tykající se jakékoli chyby ohledně 
  * aktualizace dat v aplikaci. 
+ * 
+ * @author Jan Brzobohatý
  */
 public class DataException extends Exception{
     

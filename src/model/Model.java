@@ -14,13 +14,13 @@ import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Třída představuje model dat a je hlavním a také jediným 
  * přístupovým bodem k datům. Kromě přístupu k datům také umožňuje 
  * jejich automatickou aktualizaci.
+ * 
+ * @author Jan Brzobohatý
  */
 public class Model{
     
@@ -33,6 +33,7 @@ public class Model{
     //
     private double prumernaCena;
 
+    //udelat singleton
     public Model(){
         aktualizovat();
     }
@@ -57,7 +58,7 @@ public class Model{
      */
     private void stahnoutSoubor() throws DataException{
          
-        //Buffer pro čtení dat z netu.
+         //Buffer pro čtení dat z netu.
          BufferedInputStream bis = null;
          
          //Buffer pro zapisování dat do souboru
@@ -127,16 +128,22 @@ public class Model{
         IParser parser = new Parser();
         
         //seznam akcií
-        ArrayList seznamAkcii = new ArrayList(2000);
+        ArrayList seznamAkcii;
         
         //seznam dat pro jednu akcii v konkrétním datumu
         ArrayList seznamDat;
         
         //rozdíl počáteční a koncové denní ceny
-        double cena;
+        double propad;
         
-        //součet počáteční a koncové denní ceny
-        double cena2;
+        //prumerna cena za den
+        double prumer;
+        
+        //odchylka průměrné ceny za den od maxima za den
+        double odchylkaMax;
+        
+        //odchylka průměrné ceny za den od minima za den
+        double odchylkaMin;
         
         try{
             BufferedReader br = new BufferedReader(new FileReader(soubor));
@@ -149,22 +156,31 @@ public class Model{
             throw new DataException("Nastala chyba při parsování typu String na Date");
         }
         
-        //transformace arrayListu na objekty
+        //transformace arrayListu na objekty + výpočty
         while(seznamAkcii.iterator().hasNext()){    
             //jedna akcie
             seznamDat = (ArrayList)seznamAkcii.iterator().next();
 
             //rozdíl počáteční a koncové denní ceny
-            cena = (double)seznamDat.get(2)-(double)seznamDat.get(3);
-            cena2 = (double)seznamDat.get(2)+(double)seznamDat.get(3);
-        
+            propad = (double)seznamDat.get(2)-(double)seznamDat.get(3);
+            
+            //soucet koncove a pocatecni denní hodnoty vyděleno dvěma
+            prumer = ((double)seznamDat.get(2)+(double)seznamDat.get(3))/2;
+            
+            //prumer - max
+            odchylkaMax = Math.abs(prumer-(double)seznamDat.get(4));
+                    
+            //prumer - min
+            odchylkaMin = Math.abs(prumer-(double)seznamDat.get(5));
+            
             //ulozeni jedne akcie
-            Firma.pridatAkcie(new Akcie((double)seznamDat.get(4),
-                                        (double)seznamDat.get(5),
-                                        cena2/2,
-                                        cena,
+            Firmy.pridatAkcii(new Akcie(odchylkaMax,
+                                        odchylkaMin,
+                                        prumer,
+                                        propad,
                                         (Date)seznamDat.get(1),
-                                        (String)seznamDat.get(0)));
+                                        (String)seznamDat.get(0),
+                                        (int)seznamDat.get(6)));
         }
     }
 
