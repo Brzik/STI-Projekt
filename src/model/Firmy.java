@@ -13,7 +13,7 @@ import java.util.HashMap;
  * @author Jan Brzobohatý
  */
 public class Firmy {
-    a
+
     private Firmy(){}
     
     //seznam všech firem (klíč je zkratka firmy)

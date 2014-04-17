@@ -29,9 +29,6 @@ public class Model{
     
     //soubor do kterého ukládáme stažená data a následně z něj čteme
     private File soubor;
-    
-    //
-    private double prumernaCena;
 
     //udelat singleton
     public Model(){
@@ -182,14 +179,6 @@ public class Model{
                                         (String)seznamDat.get(0),
                                         (int)seznamDat.get(6)));
         }
-    }
-
-    public double getPrumernaCena() {
-        return 0.0;
-    }
-
-    private void setPrumernaCena() {
-        
     }
 
     public ArrayList getData(Date zacatek, Date konec) {
