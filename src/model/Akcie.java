@@ -1,5 +1,6 @@
 package model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -97,5 +98,16 @@ class Akcie {
      */
     public double getObjem() {
         return objem;
+    }
+    
+    /**
+     * @return vrací datum jako řetězec ve formátu "dd. mm. yyyy"
+     */
+    public String getDatumToString(){
+        SimpleDateFormat ft;
+        
+        ft = new SimpleDateFormat ("dd. MM. yyyy");
+
+        return ft.format(datum);
     }
 }

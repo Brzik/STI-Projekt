@@ -1,6 +1,8 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,7 +39,7 @@ class Firma {
      * Pridá akcii k této firmě.
      * @param akcie akcie, kterou chceme přidat
      */
-    public void pridatAkcii(Akcie akcie) {
+    public final void pridatAkcii(Akcie akcie) {
         this.akcie.put(akcie.getDatum(), akcie);
         vypocitejDlouhodobyPrumer();
     }
@@ -196,7 +198,7 @@ class Firma {
         
         Iterator iterator;       
         
-        iterator = vybraneAkcie.iterator();        
+        iterator = vybraneAkcie.iterator();
         dnu=vybraneAkcie.size();
         suma=0;
         
@@ -290,12 +292,51 @@ class Firma {
         return Math.abs(dlouhodobyPrumer-prumernaCena);
     }
     
-    
-    private void getDatumy(){
-                //      Date dNow = new Date();
-                //      SimpleDateFormat ft = new SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a zzz");
-                //
-                //      System.out.println("Current Date: " + ft.format(dNow));
-
+    /**
+     * @param zacatek zacatek období, pro které chceme graf
+     * @param konec konec období, pro které chceme graf
+     * @return graf (množinu uspořádaných dvojic), kde první člen (index=0) 
+     * ve dvojici je datum jako textový řetězec ve formátu "dd. mm. yyyy" 
+     * a druhý člen (index 1) je průmerná cena k tomuto datu. Množina je 
+     * uspořádána chronologicky podle data.
+     */
+    public ArrayList[] getGraf(Date zacatek, Date konec){
+        //seznam akcii poze v zadaném intevalu
+        ArrayList vybraneAkcie;
+        Iterator iteratorAkcii;
+        
+        //pole představující množinu uspořádaných dvojic
+        ArrayList[] mnozinaDvojic;
+        
+        //uspořádaná dvojice (datum, prumerna cen)
+        ArrayList usporadanaDvojice;
+        
+        //chronologické uspořádání akcií podle data
+        vybraneAkcie = vyberAkcie(zacatek, konec);
+        Collections.sort(vybraneAkcie, new Comparator<Akcie>() {
+            @Override
+            public int compare(Akcie akcie1, Akcie akcie2) {
+                if(akcie1.getDatum().after(akcie2.getDatum())){
+                    return 1;
+                }else if(akcie1.getDatum().before(akcie2.getDatum())){
+                    return -1;
+                }
+                return 0;
+            }
+        });
+        
+        //oříznutí velikosti seznamu
+        vybraneAkcie.trimToSize();
+        
+        iteratorAkcii = vybraneAkcie.iterator();
+        mnozinaDvojic = new ArrayList[vybraneAkcie.size()];
+        for(int i=0;i<mnozinaDvojic.length;i++){
+            usporadanaDvojice = new ArrayList(2);
+            usporadanaDvojice.set(0,((Akcie)iteratorAkcii.next()).getDatumToString());
+            usporadanaDvojice.set(1,((Akcie)iteratorAkcii.next()).getPrumernaCena());
+            mnozinaDvojic[i] = usporadanaDvojice;
+        }
+        
+        return mnozinaDvojic;
     }
 }

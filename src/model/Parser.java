@@ -9,7 +9,7 @@ import java.util.ArrayList;
 class Parser implements IParser{
 
     @Override
-    public ArrayList parse(BufferedReader br) throws IOException, ParseException{
+    public ArrayList<ArrayList> parse(BufferedReader br) throws IOException, ParseException{
         //seznam vsech akcii
         ArrayList seznamAkcii = new ArrayList(2000);
         

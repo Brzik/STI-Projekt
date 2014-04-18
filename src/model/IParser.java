@@ -47,5 +47,5 @@ interface IParser {
      * @throws IOException když nastane chyba při čtení ze souboru
      * @throws ParseException když nastane chyba při parsování stringu na datum
      */
-    public abstract ArrayList parse(BufferedReader br) throws IOException, ParseException;
+    public abstract ArrayList<ArrayList> parse(BufferedReader br) throws IOException, ParseException;
 }

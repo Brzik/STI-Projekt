@@ -76,7 +76,7 @@ public class ModelTest {
         Date konec = null;
         Model instance = new Model();
         ArrayList expResult = null;
-        ArrayList result = instance.getData(zacatek, konec);
+        ArrayList result = instance.getDataTabulka(zacatek, konec);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -91,7 +91,7 @@ public class ModelTest {
         String nazev = "";
         Model instance = new Model();
         ArrayList expResult = null;
-        ArrayList result = instance.getFirmu(nazev);
+        ArrayList result = instance.getDataGraf(nazev);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

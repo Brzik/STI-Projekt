@@ -29,20 +29,51 @@ public class Model{
     
     //soubor do kterého ukládáme stažená data a následně z něj čteme
     private File soubor;
+    
+    //instance této třídy
+    private static Model model;
 
-    //udelat singleton
-    public Model(){
+    /**
+     * Construktor vytvoří instanci a aktualizuje data.
+     * @throws DataException když je vadné připojení k internetu, není 
+     * dostupná stránka http://www.euinvest.cz/generate/bcpp_data.csv, došlo 
+     * k chybě při stahování dat a nebo při zapisování do souboru, nelze najít 
+     * soubor na disku pro čtení dat, nastala chyba při čtení dat ze souboru 
+     * na disku nebo nastala chyba při parsování typu String na Date
+     */
+    private Model() throws DataException{
         aktualizovat();
     }
-
-    public boolean aktualizovat(){
-        try {
-            stahnoutSoubor();
-            nacistSoubor();
-        } catch (DataException ex) {
-            System.err.println(ex.getMessage());
+    
+    /**
+     * Tovární metoda vrací instanci modelu, který je pro celou 
+     * aplikaci pouze jeden.
+     * 
+     * @return intanci modelu
+     * @throws DataException když je vadné připojení k internetu, není 
+     * dostupná stránka http://www.euinvest.cz/generate/bcpp_data.csv, došlo 
+     * k chybě při stahování dat a nebo při zapisování do souboru, nelze najít 
+     * soubor na disku pro čtení dat, nastala chyba při čtení dat ze souboru 
+     * na disku nebo nastala chyba při parsování typu String na Date 
+     */
+    public static Model getModel() throws DataException{
+        if(model == null){
+            model = new Model();
         }
-        return true;
+        return model;
+    }
+
+    /**
+     * Metoda slouží k aktualizaci veškerých dat akcií.
+     * @throws DataException když je vadné připojení k internetu, není 
+     * dostupná stránka http://www.euinvest.cz/generate/bcpp_data.csv, došlo 
+     * k chybě při stahování dat a nebo při zapisování do souboru, nelze najít 
+     * soubor na disku pro čtení dat, nastala chyba při čtení dat ze souboru 
+     * na disku nebo nastala chyba při parsování typu String na Date
+     */
+    public final void aktualizovat() throws DataException{
+        stahnoutSoubor();
+        nacistSoubor();
     }
    
     /**
@@ -125,8 +156,29 @@ public class Model{
         IParser parser = new Parser();
         
         //seznam akcií
-        ArrayList seznamAkcii;
+        ArrayList<ArrayList> seznamAkcii;
         
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(soubor));
+            seznamAkcii = parser.parse(br);
+        }catch (FileNotFoundException ex) {
+            throw new DataException("Nelze najít soubor na disku pro čtení dat.");
+        }catch (IOException ex) {
+            throw new DataException("Nastala chyba při čtení dat ze souboru na disku.");
+        }catch (ParseException ex) {
+            throw new DataException("Nastala chyba při parsování typu String na Date");
+        }
+        
+        transformujNaObjekty(seznamAkcii);
+    }
+    
+    /**
+     * Metoda uloží seznam akcií do příslušných objektů.
+     * 
+     * @param seznamAkcii seznam, který obsahuje jednotlivé akcie, 
+     * které jsou reprezentovány dalším seznamem dat příslušné akcie 
+     */
+    private void transformujNaObjekty(ArrayList<ArrayList> seznamAkcii){
         //seznam dat pro jednu akcii v konkrétním datumu
         ArrayList seznamDat;
         
@@ -141,17 +193,6 @@ public class Model{
         
         //odchylka průměrné ceny za den od minima za den
         double odchylkaMin;
-        
-        try{
-            BufferedReader br = new BufferedReader(new FileReader(soubor));
-            seznamAkcii = parser.parse(br);
-        }catch (FileNotFoundException ex) {
-            throw new DataException("Nelze najít soubor na disku pro čtení dat.");
-        }catch (IOException ex) {
-            throw new DataException("Nastala chyba při čtení dat ze souboru na disku.");
-        }catch (ParseException ex) {
-            throw new DataException("Nastala chyba při parsování typu String na Date");
-        }
         
         //transformace arrayListu na objekty + výpočty
         while(seznamAkcii.iterator().hasNext()){    
@@ -181,12 +222,49 @@ public class Model{
         }
     }
 
-    public ArrayList getData(Date zacatek, Date konec) {
-        return null;
+    /**
+     * @param zacatek začátek období, pro které chceme data
+     * @param konec konec období, pro které cheme data
+     * @return seznam seznamů, kde první seznam představuje jednotlivé 
+     * firmy (neuspořádané) a tedy každá firma je tvořena dalším seznamem, 
+     * který je pevně uspořádaný a obsahuje jednotlivá data pro jednu firmu.
+     * Seznam dat pro jednu firmu má následující indexování:
+     * 
+     * <table>
+     * <tr><th>index</th><th>hodnota</th><th>typ</th></tr>
+     * <tr><th>0</th><th>zkratka firmy</th><th>String</th></tr>
+     * <tr><th>1</th><th>průměrná cena</th><th>double</th></tr>
+     * <tr><th>2</th><th>průměrný objem</th><th>double</th></tr>
+     * <tr><th>3</th><th>odchylka od min</th><th>double</th></tr>
+     * <tr><th>4</th><th>odchylka od max</th><th>double</th></tr>
+     * <tr><th>5</th><th>odchylka od dlouh. prům.</th><th>double</th></tr>
+     * <tr><th>6</th><th>koupit</th><th>boolean</th></tr>
+     * </table>
+     */
+    public ArrayList<ArrayList> getDataTabulka(Date zacatek, Date konec) {
+        return Firmy.getData(zacatek, konec);
     }
 
-    public ArrayList getFirmu(String nazev) {
-        return null;
+    /**
+     * @param zacatek zacatek období, pro které chceme graf
+     * @param konec konec období, pro které chceme graf
+     * @param nazev název firmy, pro kterou chceme graf
+     * @return graf (množinu uspořádaných dvojic), kde první člen (index=0) 
+     * ve dvojici je datum jako textový řetězec ve formátu "dd. mm. yyyy" 
+     * a druhý člen (index 1) je průmerná cena k tomuto datu. Množina je 
+     * uspořádána chronologicky podle data.
+     */
+    public ArrayList[] getDataGraf(Date zacatek, Date konec, String nazev) throws DataException{
+        return Firmy.getGraf(zacatek, konec, nazev);
+    }
+    
+    /**
+     * @param nazev název firmy, pro kterou chceme dlouhodobý průměr
+     * @return dlouhodobý průměr zadané firmy
+     * @throws DataException v případě, že firma pro vykreslení nebyla nalazena
+     */
+    public double getDlouhodobyPrumerFirmy(String nazev) throws DataException {
+        return Firmy.getDlouhodobyPrumer(nazev);
     }
 
     public boolean jeSouborAktualni() {
