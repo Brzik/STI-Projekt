@@ -2,7 +2,6 @@ package model;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 
 /**
@@ -14,7 +13,7 @@ import java.util.ArrayList;
  * <table>
  * <tr><th>index</th><th>hodnota</th><th>typ</th></tr>
  * <tr><th>0</th><th> zkratka firmy </th><th>String</th></tr>
- * <tr><th>1</th><th>datum</th><th>Date</th></tr>
+ * <tr><th>1</th><th>datum</th><th>LocalDate</th></tr>
  * <tr><th>2</th><th>zahajovaci cena</th><th>double</th></tr>
  * <tr><th>3</th><th>zaviraci cena</th><th>double</th></tr>
  * <tr><th>4</th><th>maximální cena</th><th>double</th></tr>
@@ -36,7 +35,7 @@ interface IParser {
      * <table>
      * <tr><th>index</th><th>hodnota</th><th>typ</th></tr>
      * <tr><th>0</th><th> zkratka firmy </th><th>String</th></tr>
-     * <tr><th>1</th><th>datum</th><th>Date</th></tr>
+     * <tr><th>1</th><th>datum</th><th>LocalDate</th></tr>
      * <tr><th>2</th><th>zahajovaci cena</th><th>double</th></tr>
      * <tr><th>3</th><th>zaviraci cena</th><th>double</th></tr>
      * <tr><th>4</th><th>maximální cena</th><th>double</th></tr>
@@ -45,7 +44,6 @@ interface IParser {
      * </table>
      * </p>
      * @throws IOException když nastane chyba při čtení ze souboru
-     * @throws ParseException když nastane chyba při parsování stringu na datum
      */
-    public abstract ArrayList<ArrayList> parse(BufferedReader br) throws IOException, ParseException;
+    public abstract ArrayList<ArrayList> parse(BufferedReader br) throws IOException;
 }

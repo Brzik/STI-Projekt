@@ -5,9 +5,9 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import org.joda.time.LocalDate;
 
 /**
  * Třída představuje soubor všech firem.
@@ -31,7 +31,10 @@ class Firmy {
      * Metoda slouží k přidávání akcií do databáze.
      * @param akcie konkrétní akcie ke kokrétnímu datu
      */
-    public static void pridatAkcii(Akcie akcie) {
+    public static void pridatAkcii(Akcie akcie){
+        if(firmy==null){
+            firmy = new HashMap();
+        }
         if(firmy.containsKey(akcie.getZkratka())){
             //pokud firma už existuje, tak ji pouze pridame akcii
             firmy.get(akcie.getZkratka()).pridatAkcii(akcie);
@@ -60,16 +63,20 @@ class Firmy {
      * <tr><th>6</th><th>koupit</th><th>boolean</th></tr>
      * </table>
      */
-    public static ArrayList<ArrayList> getData(Date zacatek, Date konec){
+    public static ArrayList<ArrayList> getData(LocalDate zacatek, LocalDate konec){
         
         //seznam dat pro všechny firmy (dvourozměrný seznam, kde jeden 
         //rozměr je firma a druhý jednotlivá data)
         ArrayList data = new ArrayList();
         
-        Iterator iterator = firmy.entrySet().iterator();
+        Iterator iterator = firmy.keySet().iterator();
         
         while(iterator.hasNext()){
-            data.add(((Firma)iterator.next()).getData(zacatek, konec));
+            try{
+                data.add(firmy.get((String)iterator.next()).getData(zacatek, konec));
+            }catch(NullPointerException ex){
+                continue;
+            }
         }
         
         nastavitNejvetsiPropad(data);
@@ -118,7 +125,7 @@ class Firmy {
             
             //pokud se jedná opravdu o propad
             if(propad>0){
-                max = (int)maxList.get(0).get(6);
+                max = (double)maxList.get(0).get(6);
 
                 //pokud se propad firmy lisi pouze malo od nejvetsiho propadu, 
                 //tak zaradime firmu mezi ty s nejvetsim propadem
@@ -135,6 +142,7 @@ class Firmy {
         }
         
         //nastavení všech firem na koupit=false
+        iteratorSeznaFirem = seznamFirem.iterator();
         while(iteratorSeznaFirem.hasNext()){            
             firma = (ArrayList)iteratorSeznaFirem.next();
             firma.set(6, false);
@@ -171,7 +179,7 @@ class Firmy {
      * a druhý člen (index 1) je průmerná cena k tomuto datu. Množina je 
      * uspořádána chronologicky podle data.
      */
-    public static ArrayList[] getGraf(Date zacatek, Date konec, String nazev) throws DataException{ 
+    public static ArrayList[] getGraf(LocalDate zacatek, LocalDate konec, String nazev) throws DataException{ 
         if(firmy.containsKey(nazev)){
             return firmy.get(nazev).getGraf(zacatek, konec);
         }else{

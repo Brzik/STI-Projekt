@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Iterator;
+import org.joda.time.LocalDate;
 
 /**
  * Třída představuje model dat a je hlavním a také jediným 
@@ -39,7 +39,7 @@ public class Model{
      * dostupná stránka http://www.euinvest.cz/generate/bcpp_data.csv, došlo 
      * k chybě při stahování dat a nebo při zapisování do souboru, nelze najít 
      * soubor na disku pro čtení dat, nastala chyba při čtení dat ze souboru 
-     * na disku nebo nastala chyba při parsování typu String na Date
+     * na disku
      */
     private Model() throws DataException{
         aktualizovat();
@@ -54,7 +54,7 @@ public class Model{
      * dostupná stránka http://www.euinvest.cz/generate/bcpp_data.csv, došlo 
      * k chybě při stahování dat a nebo při zapisování do souboru, nelze najít 
      * soubor na disku pro čtení dat, nastala chyba při čtení dat ze souboru 
-     * na disku nebo nastala chyba při parsování typu String na Date 
+     * na disku
      */
     public static Model getModel() throws DataException{
         if(model == null){
@@ -69,7 +69,7 @@ public class Model{
      * dostupná stránka http://www.euinvest.cz/generate/bcpp_data.csv, došlo 
      * k chybě při stahování dat a nebo při zapisování do souboru, nelze najít 
      * soubor na disku pro čtení dat, nastala chyba při čtení dat ze souboru 
-     * na disku nebo nastala chyba při parsování typu String na Date
+     * na disku
      */
     public final void aktualizovat() throws DataException{
         stahnoutSoubor();
@@ -147,8 +147,7 @@ public class Model{
      * Meotoda načte data ze souboru na disku a uloží je do příslušných objektů.
      * 
      * @throws DataException když nelze najít soubor na disku pro čtení dat, 
-     * nastala chyba při čtení dat ze souboru na disku nebo nastala chyba při 
-     * parsování typu String na Date
+     * nastala chyba při čtení dat ze souboru na disku
      */
     private void nacistSoubor() throws DataException{
         
@@ -165,8 +164,6 @@ public class Model{
             throw new DataException("Nelze najít soubor na disku pro čtení dat.");
         }catch (IOException ex) {
             throw new DataException("Nastala chyba při čtení dat ze souboru na disku.");
-        }catch (ParseException ex) {
-            throw new DataException("Nastala chyba při parsování typu String na Date");
         }
         
         transformujNaObjekty(seznamAkcii);
@@ -194,10 +191,12 @@ public class Model{
         //odchylka průměrné ceny za den od minima za den
         double odchylkaMin;
         
+        Iterator iterator = seznamAkcii.iterator();
+        
         //transformace arrayListu na objekty + výpočty
-        while(seznamAkcii.iterator().hasNext()){    
+        while(iterator.hasNext()){  
             //jedna akcie
-            seznamDat = (ArrayList)seznamAkcii.iterator().next();
+            seznamDat = (ArrayList)iterator.next();
 
             //rozdíl počáteční a koncové denní ceny
             propad = (double)seznamDat.get(2)-(double)seznamDat.get(3);
@@ -210,13 +209,13 @@ public class Model{
                     
             //prumer - min
             odchylkaMin = Math.abs(prumer-(double)seznamDat.get(5));
-            
+                      
             //ulozeni jedne akcie
             Firmy.pridatAkcii(new Akcie(odchylkaMax,
                                         odchylkaMin,
                                         prumer,
                                         propad,
-                                        (Date)seznamDat.get(1),
+                                        (LocalDate)seznamDat.get(1),
                                         (String)seznamDat.get(0),
                                         (int)seznamDat.get(6)));
         }
@@ -241,7 +240,7 @@ public class Model{
      * <tr><th>6</th><th>koupit</th><th>boolean</th></tr>
      * </table>
      */
-    public ArrayList<ArrayList> getDataTabulka(Date zacatek, Date konec) {
+    public ArrayList<ArrayList> getDataTabulka(LocalDate zacatek, LocalDate konec) {
         return Firmy.getData(zacatek, konec);
     }
 
@@ -254,7 +253,7 @@ public class Model{
      * a druhý člen (index 1) je průmerná cena k tomuto datu. Množina je 
      * uspořádána chronologicky podle data.
      */
-    public ArrayList[] getDataGraf(Date zacatek, Date konec, String nazev) throws DataException{
+    public ArrayList[] getDataGraf(LocalDate zacatek, LocalDate konec, String nazev) throws DataException{
         return Firmy.getGraf(zacatek, konec, nazev);
     }
     

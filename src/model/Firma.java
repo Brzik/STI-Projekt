@@ -3,9 +3,10 @@ package model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import org.joda.time.LocalDate;
+
 
 /**
  * Třída představuje soubor akcií pro jednu firmu za různé dny.
@@ -17,14 +18,11 @@ class Firma {
     //zkratka firmy
     private String zkratka;
     
-    //seznam akcii této firmy k různým datům (klíč je datum)
-    private HashMap<Date,Akcie> akcie;
+    //seznam akcii této firmy k různým datům (klíč je datum ve formátu "yyyy-MM-dd")
+    private HashMap<String,Akcie> akcie;
     
     //dlouhodobý průměr firmy
     private double dlouhodobyPrumer;
-    
-    //délka jednoho dne v milisekundách
-    private final long JEDEN_DEN = 86400000;
     
     /**
      * Vytvoří novou instanci firmy a vloží do ní první akcii 
@@ -32,6 +30,7 @@ class Firma {
      */
     public Firma(Akcie akcie){
         dlouhodobyPrumer = 0;
+        zkratka = akcie.getZkratka();
         pridatAkcii(akcie);
     }
     
@@ -40,7 +39,10 @@ class Firma {
      * @param akcie akcie, kterou chceme přidat
      */
     public final void pridatAkcii(Akcie akcie) {
-        this.akcie.put(akcie.getDatum(), akcie);
+        if(this.akcie==null){
+            this.akcie = new HashMap();
+        }
+        this.akcie.put(akcie.getDatum().toString(), akcie);
         vypocitejDlouhodobyPrumer();
     }
 
@@ -49,7 +51,7 @@ class Firma {
      */
     private void vypocitejDlouhodobyPrumer(){
         //získání iteratoru pro hash mapu s akciemi
-        Iterator iteretor = akcie.entrySet().iterator();
+        Iterator iteretor = akcie.keySet().iterator();
         
         //soucet vsech prumernych cen
         double soucet = 0;
@@ -58,7 +60,7 @@ class Firma {
         int dny = 0;
         
         while(iteretor.hasNext()){
-            soucet += ((Akcie)iteretor.next()).getPrumernaCena();
+            soucet += akcie.get((String)iteretor.next()).getPrumernaCena();
             dny++;
         }
         
@@ -89,8 +91,11 @@ class Firma {
      * <tr><th>5</th><th>odchylka od dlouh. prům.</th><th>double</th></tr>
      * <tr><th>6</th><th>prům. propad za poslední 3 dny</th><th>double</th></tr>
      * </table>
+     * 
+     * @throws NullPointerException v případě, že pro danou firmu nejsou 
+     * v daném obodbí, žádné akcie
      */
-    public ArrayList getData(Date zacatek, Date konec) {
+    public ArrayList getData(LocalDate zacatek, LocalDate konec) throws NullPointerException{
         //vybraná data pro tuto firmu
         ArrayList data = new ArrayList(7);
         
@@ -101,6 +106,11 @@ class Firma {
         double prumernaCena;
         
         vybraneAkcie = vyberAkcie(zacatek, konec);
+        
+        if(vybraneAkcie==null){
+            throw new NullPointerException("V daném období nejsou pro firmu žádné akcie.");
+        }
+        
         prumernaCena = getPrumernaCena(vybraneAkcie);
         
         data.add(0, zkratka);
@@ -113,27 +123,21 @@ class Firma {
         
         return data;
     }
-
-    /**
-     * @return zkratka firmy
-     */
-    public String getZratka() {
-      return zkratka;
-    }
     
     /**
      * @param konec konec časového intervalu
      * @return propad této akcie za poslední tři dny daného intervalu
      */
-    private double getPropad3Dny(Date konec) {
+    private double getPropad3Dny(LocalDate konec) {
         
         //3 akcie za poslední 3 dny
         ArrayList<Akcie> vybraneAkcie;
         
         //3 dny od konce časového intervalu
-        Date zacatek = new Date();
+        LocalDate zacatek;
         
-        zacatek.setTime(konec.getTime()-(2*JEDEN_DEN));
+        zacatek = konec.minusDays(2);
+        
         vybraneAkcie = vyberAkcie(zacatek, konec);
         
         return getPropad3Dny(vybraneAkcie);
@@ -167,19 +171,21 @@ class Firma {
      * @param konec konec časového rozmnezí
      * @return seznam akcií v daném časovém rozmezí
      */
-    private ArrayList<Akcie> vyberAkcie(Date zacatek, Date konec){
+    private ArrayList<Akcie> vyberAkcie(LocalDate zacatek, LocalDate konec){
         
         //seznam vybraných akcií
         ArrayList<Akcie> vybraneAkcie = new ArrayList();
         
-        for(Date i=zacatek;i.before(konec);i.setTime(i.getTime()+JEDEN_DEN)){
-            if(akcie.containsKey(i)){
-                vybraneAkcie.add(akcie.get(i)); 
+        for(LocalDate i=zacatek;i.isBefore(konec);i=i.plusDays(1)){
+            if(akcie.containsKey(i.toString())){
+                vybraneAkcie.add(akcie.get(i.toString()));
             }
         }
         
         //uložení posledního dne v intervalu
-        vybraneAkcie.add(akcie.get(konec));
+        vybraneAkcie.add(akcie.get(konec.toString()));
+        
+        vybraneAkcie.trimToSize();
         
         return vybraneAkcie;
     }
@@ -300,7 +306,7 @@ class Firma {
      * a druhý člen (index 1) je průmerná cena k tomuto datu. Množina je 
      * uspořádána chronologicky podle data.
      */
-    public ArrayList[] getGraf(Date zacatek, Date konec){
+    public ArrayList[] getGraf(LocalDate zacatek, LocalDate konec){
         //seznam akcii poze v zadaném intevalu
         ArrayList vybraneAkcie;
         Iterator iteratorAkcii;
@@ -311,14 +317,17 @@ class Firma {
         //uspořádaná dvojice (datum, prumerna cen)
         ArrayList usporadanaDvojice;
         
+        //akcie pro jeden den
+        Akcie jednaAkcie;
+        
         //chronologické uspořádání akcií podle data
         vybraneAkcie = vyberAkcie(zacatek, konec);
         Collections.sort(vybraneAkcie, new Comparator<Akcie>() {
             @Override
             public int compare(Akcie akcie1, Akcie akcie2) {
-                if(akcie1.getDatum().after(akcie2.getDatum())){
+                if(akcie1.getDatum().isAfter(akcie2.getDatum())){
                     return 1;
-                }else if(akcie1.getDatum().before(akcie2.getDatum())){
+                }else if(akcie1.getDatum().isBefore(akcie2.getDatum())){
                     return -1;
                 }
                 return 0;
@@ -332,11 +341,12 @@ class Firma {
         mnozinaDvojic = new ArrayList[vybraneAkcie.size()];
         for(int i=0;i<mnozinaDvojic.length;i++){
             usporadanaDvojice = new ArrayList(2);
-            usporadanaDvojice.set(0,((Akcie)iteratorAkcii.next()).getDatumToString());
-            usporadanaDvojice.set(1,((Akcie)iteratorAkcii.next()).getPrumernaCena());
+            jednaAkcie = (Akcie)iteratorAkcii.next();
+            usporadanaDvojice.add(0,jednaAkcie.getDatumToString());
+            usporadanaDvojice.add(1,jednaAkcie.getPrumernaCena());
             mnozinaDvojic[i] = usporadanaDvojice;
         }
-        
+         
         return mnozinaDvojic;
     }
 }

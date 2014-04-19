@@ -1,7 +1,8 @@
 package model;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Akcie uchovává informaci o akcii konkrétní firmy a <b>ke konkrétnímu datu</b>.
@@ -14,7 +15,7 @@ class Akcie {
     private String zkratka;
     
     //datum, ke kterému byla akcie vypsána na burze
-    private Date datum;
+    private LocalDate datum;
     
     //odchylka průměrné ceny od denního maxima
     private double odchylkaMax;
@@ -41,7 +42,7 @@ class Akcie {
      * @param zkratka zkratka názvu firmy
      * @param objem objem akcie
      */
-    public Akcie(double odchylkaMax, double odchylkaMin, double prumernaCena, double propad, Date datum, String zkratka, int objem) {
+    public Akcie(double odchylkaMax, double odchylkaMin, double prumernaCena, double propad, LocalDate datum, String zkratka, int objem) {
         this.odchylkaMax = odchylkaMax;
         this.odchylkaMin = odchylkaMin;
         this.prumernaCena = prumernaCena;
@@ -89,7 +90,7 @@ class Akcie {
     /**
      * @return datum ke kterému byla akcie vypsána
      */
-    public Date getDatum() {
+    public LocalDate getDatum() {
       return datum;
     }
 
@@ -104,10 +105,8 @@ class Akcie {
      * @return vrací datum jako řetězec ve formátu "dd. mm. yyyy"
      */
     public String getDatumToString(){
-        SimpleDateFormat ft;
-        
-        ft = new SimpleDateFormat ("dd. MM. yyyy");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd. MM. yyyy");
 
-        return ft.format(datum);
+        return datum.toString(formatter);
     }
 }
