@@ -14,6 +14,8 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Třída představuje model dat a je hlavním a také jediným 
@@ -32,16 +34,20 @@ public class Model{
     
     //instance této třídy
     private static Model model;
+    
+    //poslední datum v souboru
+    private LocalDate posledniDatum;
 
     /**
-     * Construktor vytvoří instanci a aktualizuje data.
+     * Konstruktor vytvoří instanci a aktualizuje data.
      * @throws DataException když je vadné připojení k internetu, není 
      * dostupná stránka http://www.euinvest.cz/generate/bcpp_data.csv, došlo 
      * k chybě při stahování dat a nebo při zapisování do souboru, nelze najít 
      * soubor na disku pro čtení dat, nastala chyba při čtení dat ze souboru 
      * na disku
+     * @throws pokud data nejsou validní
      */
-    private Model() throws DataException{
+    private Model() throws DataException, FatalException{
         aktualizovat();
     }
     
@@ -55,8 +61,9 @@ public class Model{
      * k chybě při stahování dat a nebo při zapisování do souboru, nelze najít 
      * soubor na disku pro čtení dat, nastala chyba při čtení dat ze souboru 
      * na disku
+     * @throws pokud data nejsou validní
      */
-    public static Model getModel() throws DataException{
+    public static Model getModel() throws DataException, FatalException{
         if(model == null){
             model = new Model();
         }
@@ -70,9 +77,11 @@ public class Model{
      * k chybě při stahování dat a nebo při zapisování do souboru, nelze najít 
      * soubor na disku pro čtení dat, nastala chyba při čtení dat ze souboru 
      * na disku
+     * @throws FatalException pokud data nejsou validní
      */
-    public final void aktualizovat() throws DataException{
+    public final void aktualizovat() throws DataException, FatalException{
         stahnoutSoubor();
+        clear();
         nacistSoubor();
     }
    
@@ -114,9 +123,9 @@ public class Model{
                     URLConnection urlc2 = url2.openConnection();
                     urlc2.getInputStream();
                 }catch(UnknownHostException e){
-                    throw new DataException("Nelze se připojit k internetu.");
+                    throw new DataException("Nelze se připojit k internetu. (Model->stahnoutSoubor)");
                 }
-                throw new DataException("Stránka " + ADRESA +" není dostupná.");
+                throw new DataException("Stránka " + ADRESA +" není dostupná. (Model->stahnoutSoubor)");
             }
             
             bos = new BufferedOutputStream(new FileOutputStream(soubor));
@@ -128,7 +137,7 @@ public class Model{
                bos.write(i);
             }
          }catch(IOException ex){
-                throw new DataException("Při stahování souboru nastala chyba.");
+                throw new DataException("Při stahování souboru nastala chyba. (Model->stahnoutSoubor)");
          }finally{
              try{
                 if(bis!=null){
@@ -138,7 +147,7 @@ public class Model{
                     bos.close();
                 }
              }catch(IOException ex){
-                throw new DataException("Při stahování souboru nastala chyba.");
+                throw new DataException("Při stahování souboru nastala chyba. (Model->stahnoutSoubor)");
              }
          }
     }
@@ -148,8 +157,9 @@ public class Model{
      * 
      * @throws DataException když nelze najít soubor na disku pro čtení dat, 
      * nastala chyba při čtení dat ze souboru na disku
+     * @throws FatalException pokud data nejsou validní.
      */
-    private void nacistSoubor() throws DataException{
+    private void nacistSoubor() throws DataException, FatalException{
         
         //parser 
         IParser parser = new Parser();
@@ -161,9 +171,9 @@ public class Model{
             BufferedReader br = new BufferedReader(new FileReader(soubor));
             seznamAkcii = parser.parse(br);
         }catch (FileNotFoundException ex) {
-            throw new DataException("Nelze najít soubor na disku pro čtení dat.");
+            throw new DataException("Nelze najít soubor na disku pro čtení dat. (Model->nacistSoubor)");
         }catch (IOException ex) {
-            throw new DataException("Nastala chyba při čtení dat ze souboru na disku.");
+            throw new DataException("Nastala chyba při čtení dat ze souboru na disku. (Model->nacistSoubor)");
         }
         
         transformujNaObjekty(seznamAkcii);
@@ -174,8 +184,10 @@ public class Model{
      * 
      * @param seznamAkcii seznam, který obsahuje jednotlivé akcie, 
      * které jsou reprezentovány dalším seznamem dat příslušné akcie 
+     * 
+     * @throws FatalException pokud data nejsou validní.
      */
-    private void transformujNaObjekty(ArrayList<ArrayList> seznamAkcii){
+    private void transformujNaObjekty(ArrayList<ArrayList> seznamAkcii) throws FatalException{
         //seznam dat pro jednu akcii v konkrétním datumu
         ArrayList seznamDat;
         
@@ -210,12 +222,16 @@ public class Model{
             //prumer - min
             odchylkaMin = Math.abs(prumer-(double)seznamDat.get(5));
                       
+            //pokud se bude jednat o poslední akcii, tak v proměnné
+            //posledniDatum zůstane uloženo poslední datum v souboru
+            posledniDatum = (LocalDate)seznamDat.get(1);
+            
             //ulozeni jedne akcie
             Firmy.pridatAkcii(new Akcie(odchylkaMax,
                                         odchylkaMin,
                                         prumer,
                                         propad,
-                                        (LocalDate)seznamDat.get(1),
+                                        posledniDatum,
                                         (String)seznamDat.get(0),
                                         (int)seznamDat.get(6)));
         }
@@ -224,10 +240,10 @@ public class Model{
     /**
      * @param zacatek začátek období, pro které chceme data
      * @param konec konec období, pro které cheme data
-     * @return seznam seznamů, kde první seznam představuje jednotlivé 
-     * firmy (neuspořádané) a tedy každá firma je tvořena dalším seznamem, 
+     * @return seznam polí, kde seznam představuje jednotlivé 
+     * firmy (neuspořádané) a každá firma je tvořena polem dat (size=7), 
      * který je pevně uspořádaný a obsahuje jednotlivá data pro jednu firmu.
-     * Seznam dat pro jednu firmu má následující indexování:
+     * Pole dat pro jednu firmu má následující indexování:
      * 
      * <table>
      * <tr><th>index</th><th>hodnota</th><th>typ</th></tr>
@@ -239,8 +255,13 @@ public class Model{
      * <tr><th>5</th><th>odchylka od dlouh. prům.</th><th>double</th></tr>
      * <tr><th>6</th><th>koupit</th><th>boolean</th></tr>
      * </table>
+     * 
+     * @throws DatumException pokud datum zacatek je chronologicky az po datumu 
+     * konec nebo pokud je jeden z datumů null
+     * @throws DataException pokud pro dané období nejsou žádná data.
+     * @throws FatalException pokud nejsou k dispozici žádná data.
      */
-    public ArrayList<ArrayList> getDataTabulka(LocalDate zacatek, LocalDate konec) {
+    public ArrayList<Object[]> getDataTabulka(LocalDate zacatek, LocalDate konec) throws DataException, DatumException, FatalException {
         return Firmy.getData(zacatek, konec);
     }
 
@@ -248,25 +269,55 @@ public class Model{
      * @param zacatek zacatek období, pro které chceme graf
      * @param konec konec období, pro které chceme graf
      * @param nazev název firmy, pro kterou chceme graf
-     * @return graf (množinu uspořádaných dvojic), kde první člen (index=0) 
+     * @return dvourozměrné pole reprezentující graf (množinu uspořádaných dvojic),
+     * kde první souřadnice představuje jednotlivé uspořádané dvojice a druhá 
+     * souřadnice představuje indexování v uspořádané dvojici. První člen (index=0) 
      * ve dvojici je datum jako textový řetězec ve formátu "dd. mm. yyyy" 
-     * a druhý člen (index 1) je průmerná cena k tomuto datu. Množina je 
+     * a druhý člen (index 1) je průmerná cena (double) k tomuto datu. Množina je 
      * uspořádána chronologicky podle data.
+     * 
+     * <h1>Konkrétní příklad:</h1>
+     * <table>
+     * <tr><th>1.rozměr/2.rozměr</th><th>0</th><th>1</th></tr>
+     * <tr><th>0</th><th>24. 5. 2014</th><th>525.00</th></tr>
+     * <tr><th>1</th><th>25. 5. 2014</th><th>475.25</th></tr>
+     * <tr><th>2</th><th>27. 5. 2014</th><th>255.45</th></tr>
+     * </table>
+     * 
+     * @throws DatumException pokud datum <b>zacatek</b> je chronologicky az po datumu <b>konec</b>
+     * @throws DataException pokud v daném období nejsou žádná data pro tuto 
+     * firmu nebo nebyl nalezen žádný záznam s takovýmto názvem
+     * @throws FatalException v případě, že nejsou k dispozici žádná data.
      */
-    public ArrayList[] getDataGraf(LocalDate zacatek, LocalDate konec, String nazev) throws DataException{
+    public Object[][] getDataGraf(LocalDate zacatek, LocalDate konec, String nazev) throws DataException, DatumException, FatalException{
         return Firmy.getGraf(zacatek, konec, nazev);
     }
     
     /**
      * @param nazev název firmy, pro kterou chceme dlouhodobý průměr
      * @return dlouhodobý průměr zadané firmy
-     * @throws DataException v případě, že firma pro vykreslení nebyla nalazena
+     * @throws DataException v případě, že firma pro vykreslení nebyla 
+     * nalazena nebo nazev=null nebo nazev=""
+     * @throws FatalException v případě, že nejsou k dispozici žádná data.
      */
-    public double getDlouhodobyPrumerFirmy(String nazev) throws DataException {
+    public double getDlouhodobyPrumerFirmy(String nazev) throws DataException, FatalException{
         return Firmy.getDlouhodobyPrumer(nazev);
     }
-
-    public boolean jeSouborAktualni() {
-        return false;
+    
+    /**
+     * Metoda vymaže veškerá data v programu (ne ze souboru).
+     */
+    private void clear(){
+        Firmy.clear();
+    }
+    
+    /**
+     * @return poslední datum v souboru jako řetězec ve formátu "dd. mm. yyyy" 
+     * (Poslední datum v souboru představuje datum, ke kterému 
+     * byl soubor naposledy aktualizován.) 
+     */
+    public String getPosledniDatumVSouboru(){
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd. MM. yyyy");
+        return posledniDatum.toString(formatter);
     }
 }

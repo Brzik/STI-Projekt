@@ -34,15 +34,24 @@ class Akcie {
 
     /**
      * Vytvoří akcii pro konkrétní firmu a ke konkrétnímu datu.
-     * @param odchylkaMax odchylka aktuální ceny od denního maxima
-     * @param odchylkaMin odchylka aktuální ceny od denního minima
-     * @param prumernaCena prumerna cena akcie za tento den
+     * @param odchylkaMax odchylka aktuální ceny od denního maxima (musí být >= 0)
+     * @param odchylkaMin odchylka aktuální ceny od denního minima (musí být >= 0)
+     * @param prumernaCena prumerna cena akcie za tento den (prumerna cena >= 0 
+     * a mensi nebo rovno 9999999999999999)
      * @param propad propad akcie za tento den
      * @param datum datum, ke kterému byla kacie vypsána
-     * @param zkratka zkratka názvu firmy
-     * @param objem objem akcie
+     * @param zkratka zkratka názvu firmy (musí obsahovat alespoň jeden znak)
+     * @param objem objem akcie (musí být >= 0)
+     * 
+     * @throws FatalException když data nejsou validní
      */
-    public Akcie(double odchylkaMax, double odchylkaMin, double prumernaCena, double propad, LocalDate datum, String zkratka, int objem) {
+    public Akcie(double odchylkaMax, double odchylkaMin, double prumernaCena, double propad, LocalDate datum, String zkratka, int objem) throws FatalException {
+        if(odchylkaMax<0||odchylkaMin<0||prumernaCena<0||objem<0||prumernaCena>9999999999999999.0){
+            if(datum==null||zkratka.isEmpty()){
+                throw new FatalException("Data nejsou validní. (class Akcie)");
+            }
+            throw new FatalException("Data nejsou validní. (class Akcie)" + " " + zkratka + " " +datum.toString());
+        }
         this.odchylkaMax = odchylkaMax;
         this.odchylkaMin = odchylkaMin;
         this.prumernaCena = prumernaCena;
@@ -102,7 +111,7 @@ class Akcie {
     }
     
     /**
-     * @return vrací datum jako řetězec ve formátu "dd. mm. yyyy"
+     * @return datum jako řetězec ve formátu "dd. mm. yyyy"
      */
     public String getDatumToString(){
         DateTimeFormatter formatter = DateTimeFormat.forPattern("dd. MM. yyyy");

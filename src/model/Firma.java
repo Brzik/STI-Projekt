@@ -26,23 +26,30 @@ class Firma {
     
     /**
      * Vytvoří novou instanci firmy a vloží do ní první akcii 
-     * @param akcie první akcie
+     * @param akcie první akcie (nesmí být null)
+     * 
+     * @throws FatalException když data nejsou validní
      */
-    public Firma(Akcie akcie){
+    public Firma(Akcie akcie) throws FatalException{
         dlouhodobyPrumer = 0;
         zkratka = akcie.getZkratka();
+        this.akcie = new HashMap();
         pridatAkcii(akcie);
     }
     
     /**
      * Pridá akcii k této firmě.
-     * @param akcie akcie, kterou chceme přidat
+     * @param akcie akcie, kterou chceme přidat (nesmí být null)
+     * 
+     * @throws FatalException když data nejsou validní
      */
-    public final void pridatAkcii(Akcie akcie) {
-        if(this.akcie==null){
-            this.akcie = new HashMap();
+    public final void pridatAkcii(Akcie akcie) throws FatalException {
+        if(akcie==null||this.akcie.containsKey(akcie.getDatum().toString())){
+            throw new FatalException("Data nejsou validní. (class Firma->pridatAkcii)");
         }
+        
         this.akcie.put(akcie.getDatum().toString(), akcie);
+        
         vypocitejDlouhodobyPrumer();
     }
 
@@ -92,12 +99,14 @@ class Firma {
      * <tr><th>6</th><th>prům. propad za poslední 3 dny</th><th>double</th></tr>
      * </table>
      * 
-     * @throws NullPointerException v případě, že pro danou firmu nejsou 
+     * @throws DataException v případě, že pro danou firmu nejsou 
      * v daném obodbí, žádné akcie
+     * 
+     * @throws DatumException pokud datum <b>zacatek</b> je chronologicky az po datumu <b>konec</b> 
      */
-    public ArrayList getData(LocalDate zacatek, LocalDate konec) throws NullPointerException{
+    public Object[] getData(LocalDate zacatek, LocalDate konec) throws DataException, DatumException{
         //vybraná data pro tuto firmu
-        ArrayList data = new ArrayList(7);
+        Object[] data = new Object[7];
         
         //akcie, které jsou v zadaném časovém intervalu
         ArrayList<Akcie> vybraneAkcie;
@@ -105,21 +114,25 @@ class Firma {
         //průměrná cena za dané časové období
         double prumernaCena;
         
+        if(zacatek.isAfter(konec)){
+            throw new DatumException("Neplatný časový interval (konec<zacatek). (class Firma->getData)");
+        }
+        
         vybraneAkcie = vyberAkcie(zacatek, konec);
         
-        if(vybraneAkcie==null){
-            throw new NullPointerException("V daném období nejsou pro firmu žádné akcie.");
+        if(vybraneAkcie.isEmpty()){
+            throw new DataException("V daném období nejsou pro firmu žádné akcie.");
         }
         
         prumernaCena = getPrumernaCena(vybraneAkcie);
         
-        data.add(0, zkratka);
-        data.add(1, prumernaCena);
-        data.add(2, getPrumernyObjem(vybraneAkcie));
-        data.add(3, getOdchylkaMin(vybraneAkcie));
-        data.add(4, getOdchylkaMax(vybraneAkcie));
-        data.add(5, getOdchylkaOdDlouhPrum(prumernaCena));
-        data.add(6, getPropad3Dny(konec));
+        data[0] = zkratka;
+        data[1] = prumernaCena;
+        data[2] = getPrumernyObjem(vybraneAkcie);
+        data[3] = getOdchylkaMin(vybraneAkcie);
+        data[4] = getOdchylkaMax(vybraneAkcie);
+        data[5] = getOdchylkaOdDlouhPrum(prumernaCena);
+        data[6] = getPropad3Dny(konec);
         
         return data;
     }
@@ -128,7 +141,7 @@ class Firma {
      * @param konec konec časového intervalu
      * @return propad této akcie za poslední tři dny daného intervalu
      */
-    private double getPropad3Dny(LocalDate konec) {
+    private double getPropad3Dny(LocalDate konec){
         
         //3 akcie za poslední 3 dny
         ArrayList<Akcie> vybraneAkcie;
@@ -139,6 +152,11 @@ class Firma {
         zacatek = konec.minusDays(2);
         
         vybraneAkcie = vyberAkcie(zacatek, konec);
+        
+        //v případě, že v období nejsou žádné údaje
+        if(vybraneAkcie.isEmpty()){
+            return 0;
+        }
         
         return getPropad3Dny(vybraneAkcie);
     }
@@ -152,7 +170,7 @@ class Firma {
         //součet všech propadů cen akcií v časovém intervalu
         double suma;
         
-        Iterator iterator;       
+        Iterator iterator; 
         
         iterator = vybraneAkcie.iterator();        
         suma=0;
@@ -161,7 +179,7 @@ class Firma {
             suma += ((Akcie)iterator.next()).getPropad();
         }
         
-        return suma/3;
+        return suma/vybraneAkcie.size();
     }
     
     /**
@@ -183,7 +201,10 @@ class Firma {
         }
         
         //uložení posledního dne v intervalu
-        vybraneAkcie.add(akcie.get(konec.toString()));
+        if(akcie.containsKey(konec.toString())){
+            vybraneAkcie.add(akcie.get(konec.toString()));
+        }
+        
         
         vybraneAkcie.trimToSize();
         
@@ -301,25 +322,44 @@ class Firma {
     /**
      * @param zacatek zacatek období, pro které chceme graf
      * @param konec konec období, pro které chceme graf
-     * @return graf (množinu uspořádaných dvojic), kde první člen (index=0) 
+     * @return dvourozměrné pole reprezentující graf (množinu uspořádaných dvojic),
+     * kde první souřadnice představuje jednotlivé uspořádané dvojice a druhá 
+     * souřadnice představuje indexování v uspořádané dvojici. První člen (index=0) 
      * ve dvojici je datum jako textový řetězec ve formátu "dd. mm. yyyy" 
-     * a druhý člen (index 1) je průmerná cena k tomuto datu. Množina je 
+     * a druhý člen (index 1) je průmerná cena (double) k tomuto datu. Množina je 
      * uspořádána chronologicky podle data.
+     * 
+     * <h1>Konkrétní příklad:</h1>
+     * <table>
+     * <tr><th>1.rozměr/2.rozměr</th><th>0</th><th>1</th></tr>
+     * <tr><th>0</th><th>24. 5. 2014</th><th>525.00</th></tr>
+     * <tr><th>1</th><th>25. 5. 2014</th><th>475.25</th></tr>
+     * <tr><th>2</th><th>27. 5. 2014</th><th>255.45</th></tr>
+     * </table>
+     * 
+     * @throws DatumException pokud datum <b>zacatek</b> je chronologicky az po datumu <b>konec</b>
+     * @throws DataException pokud v daném období nejsou žádná data pro tuto firmu
      */
-    public ArrayList[] getGraf(LocalDate zacatek, LocalDate konec){
+    public Object[][] getGraf(LocalDate zacatek, LocalDate konec) throws DataException, DatumException{
         //seznam akcii poze v zadaném intevalu
         ArrayList vybraneAkcie;
         Iterator iteratorAkcii;
         
         //pole představující množinu uspořádaných dvojic
-        ArrayList[] mnozinaDvojic;
-        
-        //uspořádaná dvojice (datum, prumerna cen)
-        ArrayList usporadanaDvojice;
+        Object[][] mnozinaDvojic;
         
         //akcie pro jeden den
         Akcie jednaAkcie;
         
+        if(zacatek.isAfter(konec)){
+            throw new DatumException("Neplatný časový interval (konec<zacatek). (class Firma->getGraf)");
+        }
+        
+        vybraneAkcie = vyberAkcie(zacatek, konec);
+        
+        if(vybraneAkcie.isEmpty()){
+            throw new DataException("V daném období nejsou pro firmu žádné akcie. (class Firma->getGraf)");
+        }
         //chronologické uspořádání akcií podle data
         vybraneAkcie = vyberAkcie(zacatek, konec);
         Collections.sort(vybraneAkcie, new Comparator<Akcie>() {
@@ -338,13 +378,11 @@ class Firma {
         vybraneAkcie.trimToSize();
         
         iteratorAkcii = vybraneAkcie.iterator();
-        mnozinaDvojic = new ArrayList[vybraneAkcie.size()];
+        mnozinaDvojic = new Object[vybraneAkcie.size()][2];
         for(int i=0;i<mnozinaDvojic.length;i++){
-            usporadanaDvojice = new ArrayList(2);
             jednaAkcie = (Akcie)iteratorAkcii.next();
-            usporadanaDvojice.add(0,jednaAkcie.getDatumToString());
-            usporadanaDvojice.add(1,jednaAkcie.getPrumernaCena());
-            mnozinaDvojic[i] = usporadanaDvojice;
+            mnozinaDvojic[i][0] = jednaAkcie.getDatumToString();
+            mnozinaDvojic[i][1] = jednaAkcie.getPrumernaCena();
         }
          
         return mnozinaDvojic;

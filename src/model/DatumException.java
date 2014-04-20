@@ -5,17 +5,17 @@
 package model;
 
 /**
- * DataException je výjimka tykající se jakékoli chyby ohledně 
- * aktualizace dat v aplikaci. 
+ * DatumException je výjimka tykající se jakékoli chyby ohledně 
+ * časového intervalu. 
  * 
  * @author Jan Brzobohatý
  */
-public class DataException extends Exception{
+public class DatumException extends Exception{
     
     /**
      * @param hlaska hlaska, která má být uložena jako zpráva ve výjimce
      */
-    public DataException(String hlaska){
+    public DatumException(String hlaska){
         super("Error: " + hlaska);
     }
 }
