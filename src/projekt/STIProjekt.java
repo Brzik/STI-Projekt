@@ -1,11 +1,8 @@
 package projekt;
 
-import java.util.ArrayList;
-import model.DataException;
-import model.DatumException;
-import model.FatalException;
+import controller.Controller;
 import model.Model;
-import org.joda.time.LocalDate;
+import view.View;
 
 /**
  *
@@ -18,26 +15,33 @@ public class STIProjekt {
      */
     public static void main(String[] args) {
         
+        View view = new View();
+        Model model = Model.getModel();
+        
+        Controller controller = new Controller(model, view);
+        
+        controller.setVisible(true);
+            
         /*
          * test
          */
-        Model model;
-        ArrayList<Object[]> dataTabulka;
-        
-        try {
-            model = Model.getModel();
-            System.out.println("adssad");
-            LocalDate datum = new LocalDate();
-            dataTabulka = model.getDataTabulka(datum.minusDays(6),datum.minusDays(3));
-            System.out.println("ha");
-            model.getDlouhodobyPrumerFirmy("AAA");
-            System.out.println("dlouhodoby prumer");
-            model.getDataGraf(datum.minusDays(6), datum.minusDays(3), "CETV");
-            System.out.println("i graf");
-            System.out.println(model.getPosledniDatumVSouboru());
-        } catch (DataException | FatalException | DatumException ex) {
-            System.err.println(ex.getMessage());
-        }
+//        Model model;
+//        ArrayList<Object[]> dataTabulka;
+//        
+//        try {
+//            model = Model.getModel();
+//            System.out.println("adssad");
+//            LocalDate datum = new LocalDate();
+//            dataTabulka = model.getDataTabulka(datum.minusDays(6),datum.minusDays(3));
+//            System.out.println("ha");
+//            model.getDlouhodobyPrumerFirmy("AAA");
+//            System.out.println("dlouhodoby prumer");
+//            model.getDataGraf(datum.minusDays(6), datum.minusDays(3), "CETV");
+//            System.out.println("i graf");
+//            System.out.println(model.getPosledniDatumVSouboru());
+//        } catch (DataException | FatalException | DatumException ex) {
+//            System.err.println(ex.getMessage());
+//        }
         
     }
 }

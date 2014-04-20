@@ -39,31 +39,17 @@ public class Model{
     private LocalDate posledniDatum;
 
     /**
-     * Konstruktor vytvoří instanci a aktualizuje data.
-     * @throws DataException když je vadné připojení k internetu, není 
-     * dostupná stránka http://www.euinvest.cz/generate/bcpp_data.csv, došlo 
-     * k chybě při stahování dat a nebo při zapisování do souboru, nelze najít 
-     * soubor na disku pro čtení dat, nastala chyba při čtení dat ze souboru 
-     * na disku
-     * @throws pokud data nejsou validní
+     * Konstruktor vytvoří instanci pouze instanci.
      */
-    private Model() throws DataException, FatalException{
-        aktualizovat();
-    }
+    private Model(){}
     
     /**
      * Tovární metoda vrací instanci modelu, který je pro celou 
      * aplikaci pouze jeden.
      * 
      * @return intanci modelu
-     * @throws DataException když je vadné připojení k internetu, není 
-     * dostupná stránka http://www.euinvest.cz/generate/bcpp_data.csv, došlo 
-     * k chybě při stahování dat a nebo při zapisování do souboru, nelze najít 
-     * soubor na disku pro čtení dat, nastala chyba při čtení dat ze souboru 
-     * na disku
-     * @throws pokud data nejsou validní
      */
-    public static Model getModel() throws DataException, FatalException{
+    public static Model getModel(){
         if(model == null){
             model = new Model();
         }
