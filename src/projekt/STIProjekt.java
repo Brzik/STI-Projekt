@@ -2,7 +2,9 @@ package projekt;
 
 import controller.Controller;
 import model.Model;
-import view.View;
+import view.Tabulka;
+import view.akcieGUI;
+//import view.View;
 
 /**
  *
@@ -15,12 +17,12 @@ public class STIProjekt {
      */
     public static void main(String[] args) {
         
-        View view = new View();
+      /*  View view = new View();
         Model model = Model.getModel();
         
         Controller controller = new Controller(model, view);
         
-        controller.setVisible(true);
+        controller.setVisible(true);*/
             
         /*
          * test
@@ -43,5 +45,11 @@ public class STIProjekt {
 //            System.err.println(ex.getMessage());
 //        }
         
+        //test tabulky
+        //Tabulka tab=new Tabulka();
+        //tab.setVisible(true);
+        
+        //test gui
+        akcieGUI aGUI= new akcieGUI();
     }
 }

@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import model.DataException;
 import model.FatalException;
 import model.Model;
-import view.View;
+//import view.View;
 
 /**
  *
@@ -17,10 +17,10 @@ import view.View;
  */
 public class Controller {
     
-    Model model;
-    View view;
+    //Model model;
+    //View view;
     
-    public Controller(Model model, View view) {
+   /* public Controller(Model model, View view) {
         this.model = model;
         this.view = view;
         
@@ -34,15 +34,14 @@ public class Controller {
         }
         
         //přidání listenerů pro tlačítka
-        this.view.addIntervalListener(new IntervalListener());
+       /* this.view.addIntervalListener(new IntervalListener());
         this.view.addAktualizaceListener(new AktualizaceListener());
-        this.view.addGrafListener(new GrafListener());
+        this.view.addGrafListener(new GrafListener());*/
         
         
-    }
+   /* }
     
     public void setVisible(boolean b) {
         
-    }
-    
-}
+    }*/
+     } 
