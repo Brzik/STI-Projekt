@@ -92,9 +92,9 @@ public abstract class celkoveGUI extends JFrame {
 
         //STRED
         //tabulka s informacemi o firmach
-        Tabulka tabulka=new Tabulka();
-        tabulka.setVisible(true);  //melo by tabulku zobrazit
-        add(tabulka, BorderLayout.CENTER);
+        TabulkaCheckbox tabulka=new TabulkaCheckbox();
+        add(tabulka.tabulkaGUI(), BorderLayout.CENTER);
+        
         
 
         add(vykreslitGraf, BorderLayout.LINE_END);    //tlacitko 
