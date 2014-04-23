@@ -2,7 +2,7 @@ package projekt;
 
 import controller.Controller;
 import model.Model;
-import view.Tabulka;
+import view.TabulkaCheckbox;
 import view.akcieGUI;
 //import view.View;
 
@@ -45,11 +45,9 @@ public class STIProjekt {
 //            System.err.println(ex.getMessage());
 //        }
         
+       
         //test tabulky
-        //Tabulka tab=new Tabulka();
-        //tab.setVisible(true);
-        
-        //test gui
-        akcieGUI aGUI= new akcieGUI();
+        TabulkaCheckbox tc=new TabulkaCheckbox();
+        tc.tabulkaGUI();
     }
 }
