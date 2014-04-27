@@ -2,6 +2,7 @@ package projekt;
 
 import controller.Controller;
 import model.Model;
+import view.GUIAplikace;
 import view.TabulkaCheckbox;
 import view.akcieGUI;
 //import view.View;
@@ -16,14 +17,15 @@ public class STIProjekt {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        
-      /*  View view = new View();
+
         Model model = Model.getModel();
+        /*  View view = new View();
+         
         
-        Controller controller = new Controller(model, view);
+         Controller controller = new Controller(model, view);
         
-        controller.setVisible(true);*/
-            
+         controller.setVisible(true);*/
+
         /*
          * test
          */
@@ -44,10 +46,13 @@ public class STIProjekt {
 //        } catch (DataException | FatalException | DatumException ex) {
 //            System.err.println(ex.getMessage());
 //        }
-        
-       
+
+
         //test tabulky
-        TabulkaCheckbox tc=new TabulkaCheckbox();
-        tc.tabulkaGUI();
+//       TabulkaCheckbox tc=new TabulkaCheckbox();
+//        tc.tabulkaGUI();
+
+      
+        akcieGUI ag=new akcieGUI(model);
     }
 }
