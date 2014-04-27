@@ -18,10 +18,12 @@ public class DataException extends Exception{
     /**
      * @param hlaska hlaska, která má být uložena jako zpráva ve výjimce
      */
+    JLabel error;
+    
     public DataException(String hlaska){
         
-     
-        super("Error: " + hlaska);
+        error=new JLabel("Error: " + hlaska);
+        //super("Error: " + hlaska);
        
     }
 }

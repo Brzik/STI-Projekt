@@ -4,18 +4,27 @@
  */
 package model;
 
+import javax.swing.JLabel;
+import view.GUIAplikace;
+import view.akcieGUI;
+
 /**
- * DatumException je výjimka tykající se jakékoli chyby ohledně 
- * časového intervalu. 
- * 
+ * DatumException je výjimka tykající se jakékoli chyby ohledně časového
+ * intervalu.
+ *
  * @author Jan Brzobohatý
  */
-public class DatumException extends Exception{
+public class DatumException extends Exception {
     
+    akcieGUI error;
+
     /**
      * @param hlaska hlaska, která má být uložena jako zpráva ve výjimce
      */
-    public DatumException(String hlaska){
-        super("Error: " + hlaska);
+    public DatumException(String hlaska) {
+        
+        error = new akcieGUI(Model.model);
+        error.setTitle("Error: " + hlaska);
+//        super("Error: " + hlaska);
     }
 }
