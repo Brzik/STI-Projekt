@@ -22,7 +22,9 @@ import controller.GrafListener;
 import controller.IntervalListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import model.DataException;
 
 
 /**
@@ -92,6 +94,7 @@ public abstract class GUIAplikace extends JFrame {
         vykreslitGraf.addActionListener(new GrafListener());
         aktualizovatData.addActionListener(new AktualizaceListener());
 
+        
         
         
         //razeni zprava doleva
@@ -176,6 +179,9 @@ public abstract class GUIAplikace extends JFrame {
         c.gridy = 4;
         c.gridwidth = 1;
         pane.add(vykreslitGraf, c);
+        
+        
+        
         
         //chybove hlasky
         c.gridx = 0;

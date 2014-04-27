@@ -4,14 +4,20 @@
  */
 package view;
 
+import model.Model;
+
 /**
  *
  * @author Michaela
  */
-public class akcieGUI extends celkoveGUI{
-    
-    public akcieGUI(){
-        
+public class akcieGUI extends GUIAplikace{
+
+    public akcieGUI(Model model) {
+        super(model);
     }
+    
+    
+    
+  
     
 }

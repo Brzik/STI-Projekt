@@ -33,7 +33,7 @@ public class Model{
     private File soubor;
     
     //instance této třídy
-    private static Model model;
+    protected static Model model;
     
     //poslední datum v souboru
     private LocalDate posledniDatum;
@@ -41,7 +41,7 @@ public class Model{
     /**
      * Konstruktor vytvoří instanci pouze instanci.
      */
-    private Model(){}
+    protected Model(){}
     
     /**
      * Tovární metoda vrací instanci modelu, který je pro celou 
