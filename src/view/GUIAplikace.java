@@ -20,6 +20,7 @@ import controller.AktualizaceListener;
 import controller.Controller;
 import controller.GrafListener;
 import controller.IntervalListener;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
@@ -38,13 +39,14 @@ public abstract class GUIAplikace extends JFrame {
     //titulek okna
     private static String titulekOkna;
     //pro zadavani casu
-    private static JTextField casOd, casDo;
+    private static JTextField denOdText, denDoText, mesicOdText, mesicDoText, rokOdText, rokDoText;
     //tlacitka
     private static JButton casovyUsekOK, vykreslitGraf, aktualizovatData;
     //checkbox
     private static JCheckBox zaskrtavatko;
     //texty, popisky
-    private static JLabel casovyUsek, cOd, cDo, datumAktualizaceDat, posledniDatum, error;
+    private static JLabel casovyUsekOd, casovyUsekDo, cOd, cDo, datumAktualizaceDat, posledniDatum, error;
+    private static JLabel denOdLabel, denDoLabel, mesicOdLabel, mesicDoLabel, rokOdLabel, rokDoLabel;
     //okno
     private static JFrame okno;
     //layout
@@ -89,15 +91,28 @@ public abstract class GUIAplikace extends JFrame {
     public void nastavKomponenty() {
         //nastaveni Labelu
         titulekOkna = "Kupování akcií";
-        casovyUsek = new JLabel("Časový úsek");
+        casovyUsekOd = new JLabel("Časový úsek od:");
+        casovyUsekDo = new JLabel("Časový úsek do:");
         cOd = new JLabel("čas od: ");
         cDo = new JLabel("čas do: ");
-        datumAktualizaceDat = new JLabel("Poslední aktualizace dat proběhla: ");
+        denOdLabel = new JLabel("den: ");
+        denDoLabel = new JLabel("den: ");
+        mesicOdLabel = new JLabel("měsíc: ");
+        mesicDoLabel = new JLabel("měsíc: ");
+        rokOdLabel = new JLabel("rok: ");
+        rokDoLabel = new JLabel("rok: ");
+
+        datumAktualizaceDat = new JLabel("Datum poslední aktualizace: ");
         error = new JLabel();
 
         //nastaveni textfieldu
-        casDo = new JTextField(10);
-        casOd = new JTextField(10);
+        denOdText = new JTextField(10);
+        denDoText = new JTextField(10);
+        mesicDoText = new JTextField(10);
+        mesicOdText = new JTextField(10);
+        rokOdText= new JTextField(10);
+        rokDoText= new JTextField(10);
+
 
         //nastaveni popisku tlacitek
         casovyUsekOK = new JButton("OK");   //potvrzeni casoveho useku
@@ -127,71 +142,144 @@ public abstract class GUIAplikace extends JFrame {
         //zadani casoveho useku
         c.gridx = 0;
         c.gridy = 0;
-        pane.add(casovyUsek, c);
+        c.gridwidth = 1;
+        c.insets = new Insets(5, 10, 10, 10);
+        pane.add(casovyUsekOd, c);
 
 
+        //den od label
         c.gridx = 1;
         c.gridy = 0;
-        pane.add(cOd, c);
-
-
+        c.gridwidth = 1;
+        pane.add(denOdLabel, c);
+        
+        //den od text
         c.gridx = 2;
         c.gridy = 0;
-        //c.weightx = 0.1;
-        pane.add(casOd, c);
+        c.gridwidth = 1;
+        pane.add(denOdText, c);
 
+        //mesic od label
         c.gridx = 3;
         c.gridy = 0;
-        pane.add(cDo, c);
-
-
+        c.gridwidth = 1;
+        pane.add(mesicOdLabel, c);
+        
+        //mesic od text
         c.gridx = 4;
         c.gridy = 0;
-        pane.add(casDo, c);
+        c.gridwidth = 1;
+        pane.add(mesicOdText, c);
 
+        //rok od label
         c.gridx = 5;
         c.gridy = 0;
+        c.gridwidth = 1; 
+        pane.add(rokOdLabel, c);
+        
+        //rok od text
+        c.gridx = 6;
+        c.gridy = 0;
+        c.gridwidth = 1; 
+        pane.add(rokOdText, c);
+        
+        //zadani casoveho useku do
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.insets = new Insets(5, 10, 10, 10);
+        pane.add(casovyUsekDo, c);
+        
+        //den do label
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = 1;
+//        c.insets = new Insets(5, 10, 10, 10);
+        pane.add(denDoLabel, c);
+        
+        //den do text
+        c.gridx = 2;
+        c.gridy = 2;
+        c.gridwidth = 1;
+//        c.insets = new Insets(5, 10, 10, 10);
+        pane.add(denDoText, c);
+        
+        //mesic do label
+        c.gridx = 3;
+        c.gridy = 2;
+        c.gridwidth = 1;
+//        c.insets = new Insets(5, 10, 10, 10);
+        pane.add(mesicDoLabel, c);
+        
+        //mesic do text
+        c.gridx = 4;
+        c.gridy = 2;
+        c.gridwidth = 1;
+//        c.insets = new Insets(5, 10, 10, 10);
+        pane.add(mesicDoText, c);
+        
+        //rok do label
+        c.gridx = 5;
+        c.gridy = 2;
+        c.gridwidth = 1;
+//        c.insets = new Insets(5, 10, 10, 10);
+        pane.add(rokDoLabel, c);
+        
+        //rok do text
+        c.gridx = 6;
+        c.gridy = 2;
+        c.gridwidth = 1;
+//        c.insets = new Insets(5, 10, 10, 10);
+        pane.add(rokDoText, c);
+
+        //talcitko pro potvryeni cas useku
+        c.gridx = 6;
+        c.gridy = 4;
+        c.gridwidth = 1;
+//        c.insets = new Insets(5, 10, 10, 10);
         pane.add(casovyUsekOK, c);
 
+
+
         //datum posledni aktualizace souboru
-        c.insets = new Insets(5, 0, 0, 0);
+        c.insets = new Insets(5, 10, 10, 10);
         c.gridx = 0;
-        c.gridy = 1;
+        c.gridy = 5;
         pane.add(datumAktualizaceDat, c);
 
 
         //JLabel posledniDatum = new JLabel(model.getPosledniDatumVSouboru());
         JLabel pom = new JLabel("prozatim");
         c.gridx = 1;
-        c.gridy = 1;
+        c.gridy = 5;
         pane.add(pom, c);
-
-        c.gridx = 5;
-        c.gridy = 1;
-        pane.add(aktualizovatData, c);
-
 
         //tabulka
         tabulka = new TabulkaCheckbox();
 
-        //c.ipady = 40;
-        c.insets = new Insets(20, 0, 0, 0);
+  
+        c.insets = new Insets(20, 10, 10, 10);
         c.weighty = 1.0;
         c.gridx = 0;
-        c.gridwidth = 6;   //nastaveni sirky tabulky
-        c.gridy = 3;
+        c.gridwidth = 7;   //nastaveni sirky tabulky
+        c.gridy = 6;
         pane.add(new JScrollPane(tabulka.tabulkaUI()), c);  //diky JScrollPane se zobrazi nazvy sloupecku
 
         //tlacitko pro vykresleni grafu
-        c.gridx = 5;
-        c.gridy = 4;
+        c.gridx = 6;
+        c.gridy = 7;
         c.gridwidth = 1;
         pane.add(vykreslitGraf, c);
 
+        //aktualizace dat
+        c.gridx = 6;
+        c.gridy = 8;
+        pane.add(aktualizovatData, c);
+
         //chybove hlasky
         c.gridx = 0;
-        c.gridy = 5;
-        c.gridwidth = 6;
+        c.gridy = 9;
+        c.gridwidth = 7;
         c.insets = new Insets(10, 0, 0, 0);
         c.anchor = GridBagConstraints.PAGE_END;
         pane.add(error, c);
@@ -204,6 +292,11 @@ public abstract class GUIAplikace extends JFrame {
         //vytvori okno
         JFrame frame = new JFrame("Kupovani akcii");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //minimalni velikost okna
+        //frame.setMinimumSize(new Dimension(300, 300));
+        frame.setBounds(0, 0, 500, 400);
+        frame.setResizable(false);
 
 
         //nastav content pane
