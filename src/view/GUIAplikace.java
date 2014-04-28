@@ -259,7 +259,7 @@ public abstract class GUIAplikace extends JFrame {
 
   
         c.insets = new Insets(20, 10, 10, 10);
-        c.weighty = 1.0;
+        //c.weighty = 1.0;
         c.gridx = 0;
         c.gridwidth = 7;   //nastaveni sirky tabulky
         c.gridy = 6;

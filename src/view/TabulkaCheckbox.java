@@ -52,7 +52,7 @@ public class TabulkaCheckbox {
         dtm.addRow(new Object[]{"UNIPE", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
         dtm.addRow(new Object[]{"VIG", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
 
-        
+
 
         //checkbox pro posledni sloupecek
         for (int columnNumber = 7; columnNumber < tabulka.getColumnCount(); columnNumber++) {
@@ -62,7 +62,32 @@ public class TabulkaCheckbox {
             //tc.setHeaderRenderer(new CheckBoxHeader(new MyItemListener(), String.valueOf(columnNumber)));
         }
         tabulka.setVisible(true);
+        velikostSloupecku(tabulka);
 
         return tabulka;
+    }
+
+    public void velikostSloupecku(JTable tabulka) {
+        tabulka.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tabulka.getColumnModel().getColumn(0).setPreferredWidth(100);
+        tabulka.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tabulka.getColumnModel().getColumn(2).setPreferredWidth(100);
+        tabulka.getColumnModel().getColumn(3).setPreferredWidth(80);
+        tabulka.getColumnModel().getColumn(4).setPreferredWidth(80);
+        tabulka.getColumnModel().getColumn(5).setPreferredWidth(130);
+        tabulka.getColumnModel().getColumn(6).setPreferredWidth(80);
+        tabulka.getColumnModel().getColumn(7).setPreferredWidth(70);
+       
+        
+//        table.getColumnModel().getColumn(1).setPreferredWidth(120);
+//        table.getColumnModel().getColumn(2).setPreferredWidth(100);
+//        table.getColumnModel().getColumn(3).setPreferredWidth(90);
+//        table.getColumnModel().getColumn(4).setPreferredWidth(90);
+//        table.getColumnModel().getColumn(6).setPreferredWidth(120);
+//        table.getColumnModel().getColumn(7).setPreferredWidth(100);
+//        table.getColumnModel().getColumn(8).setPreferredWidth(95);
+//        table.getColumnModel().getColumn(9).setPreferredWidth(40);
+//        table.getColumnModel().getColumn(10).setPreferredWidth(400);
+
     }
 }
