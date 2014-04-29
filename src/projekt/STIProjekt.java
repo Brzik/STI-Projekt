@@ -5,6 +5,7 @@ import model.Model;
 import view.GUIAplikace;
 import view.TabulkaCheckbox;
 import view.akcieGUI;
+
 //import view.View;
 
 /**
@@ -54,5 +55,6 @@ public class STIProjekt {
 
       
         akcieGUI ag=new akcieGUI(model);
+
     }
 }

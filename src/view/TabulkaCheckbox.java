@@ -5,12 +5,19 @@
 package view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
@@ -20,7 +27,7 @@ import model.Model;
  *
  * @author Michaela
  */
-public class TabulkaCheckbox {
+public  class TabulkaCheckbox {
 
     //nazvy sloupecku tabulky
     private String prvni = "Zkratka firmy", druhy = "Průměrná cena", treti = "Průměrný objem";
@@ -29,7 +36,7 @@ public class TabulkaCheckbox {
     Object jmenaSloupcu[] = {prvni, druhy, treti, ctvrty, paty, sesty, sedmy, osmy};
     Object data[][] = {};
     DefaultTableModel dtm;
-    JTable tabulka;
+     JTable tabulka;
     Model model = Model.getModel();
 
     public JTable tabulkaUI() {
@@ -38,9 +45,11 @@ public class TabulkaCheckbox {
 
         naplneniTabulkyDaty(tabulka, dtm);
         checkBoxProPosledniSloupec(tabulka);
-
-        tabulka.setVisible(true);
         velikostSloupecku(tabulka);
+        cteniRadku();
+        
+        tabulka.setVisible(true);
+        
 
         return tabulka;
     }
@@ -59,6 +68,88 @@ public class TabulkaCheckbox {
 
 
     }
+    
+   public void cteniRadku() { 
+        
+        ListSelectionModel selectionModel = tabulka.getSelectionModel();
+        selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);  //mozna to bude chtit multiple selection
+        selectionModel.addListSelectionListener(new RowListener(this));
+    }
+
+    class RowListener implements ListSelectionListener {
+
+        TabulkaCheckbox ctiRadek;
+        
+        public RowListener(TabulkaCheckbox ctiR) {
+            ctiRadek = ctiR;
+            tabulka = ctiRadek.tabulka;
+        }
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            if (!e.getValueIsAdjusting()) {
+                ListSelectionModel model = tabulka.getSelectionModel();
+                int lead = model.getLeadSelectionIndex();
+                zobrazDataZVybranehoRadku(lead);
+            }
+        }
+
+        private void zobrazDataZVybranehoRadku(int indexRadku) {
+            int sloupecky = tabulka.getColumnCount();
+            String s = "";
+            for (int i = 0; i < sloupecky-1; i++) {
+                Object o = tabulka.getValueAt(indexRadku, i);
+                s += o.toString();
+                if (i < sloupecky - 1) {
+                    s += ", ";
+                }
+            }
+//            readRow.label.setText(s);
+            System.out.println(s);
+        }
+    }
+    
+//    public void tabulkaListener(JTable tabulka){
+//        tabulka.getModel().addTableModelListener(new TableModelListener() {
+//            JTable tabulka;
+//            String selectedData;
+//            @Override
+//            public void tableChanged(TableModelEvent e) {
+//                List<String> dataTabulky = new ArrayList<>();
+//                tabulka.getValueAt(0,0);
+//                System.out.println("Selected Rows: " + );
+//                System.out.println("Selected: " + dataTabulky);
+//            }
+//        });
+//    }
+
+//    public void tabulkaListener(JTable tabulka) {
+//        tabulka.setCellSelectionEnabled(true);
+//        ListSelectionModel cellSelectionModel = tabulka.getSelectionModel();
+//        cellSelectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);  //umozni vyber vice radku najednou
+//
+//
+//        cellSelectionModel.addListSelectionListener(new ListSelectionListener() {
+//            JTable tabulka;
+//            
+//            @Override
+//            public void valueChanged(ListSelectionEvent e) {
+//                String selectedData = null;
+//
+//                //int[] selectedRow = tabulka.getSelectedRows();
+//                //int[] selectedColumns = tabulka.getSelectedColumns();
+//                List<String> dataTabulky = new ArrayList<>();
+//                for (int i = 0; i < tabulka.getRowCount(); i++) {
+//                    for (int j = 0; j < tabulka.getColumnCount(); j++) {
+//                        selectedData = (String) tabulka.getValueAt(i, j);
+//                        dataTabulky.add(selectedData);
+//                    }
+//                }
+//                System.out.println("Selected: " + dataTabulky);
+//            }
+//        });
+//    }
+  
 
     //prida checkbox do posledniho sloupecku
     public void checkBoxProPosledniSloupec(JTable tabulka) {
@@ -98,17 +189,19 @@ public class TabulkaCheckbox {
         //projde radky 
         for (int i = 0; i < tabulka.getRowCount(); i++) {
             boolean isChecked = (Boolean) tabulka.getValueAt(i, 7);
-            
+
             //pokud je zaskrtnuto,projde sloupecky a vytaha z nich data
             if (isChecked) {
                 //vytvoreni arrayListu pro ulozeni dat
-                List<String> dataTabulky=new ArrayList<>();
+                List<String> dataTabulky = new ArrayList<>();
                 //projde sloupecky
-                for(int j=0; j<tabulka.getColumnCount();j++){
+                for (int j = 0; j < tabulka.getColumnCount(); j++) {
                     dataTabulky.add(dtm.getValueAt(i, j).toString());
                     System.out.println(dataTabulky.add(dtm.getValueAt(i, j).toString()));
                 }
             }
         }
     }
+
+   
 }
