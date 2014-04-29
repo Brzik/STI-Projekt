@@ -4,6 +4,8 @@
  */
 package view;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -34,7 +36,43 @@ public class TabulkaCheckbox {
         dtm = new DefaultTableModel(data, jmenaSloupcu);
         tabulka = new JTable(dtm);
 
+        naplneniTabulkyDaty(tabulka, dtm);
+        checkBoxProPosledniSloupec(tabulka);
 
+        tabulka.setVisible(true);
+        velikostSloupecku(tabulka);
+
+        return tabulka;
+    }
+
+    //nastavi natvrdo velikost sloupcu tabulky
+    public void velikostSloupecku(JTable tabulka) {
+        tabulka.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tabulka.getColumnModel().getColumn(0).setPreferredWidth(80);
+        tabulka.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tabulka.getColumnModel().getColumn(2).setPreferredWidth(106);
+        tabulka.getColumnModel().getColumn(3).setPreferredWidth(80);
+        tabulka.getColumnModel().getColumn(4).setPreferredWidth(80);
+        tabulka.getColumnModel().getColumn(5).setPreferredWidth(130);
+        tabulka.getColumnModel().getColumn(6).setPreferredWidth(80);
+        tabulka.getColumnModel().getColumn(7).setPreferredWidth(70);
+
+
+    }
+
+    //prida checkbox do posledniho sloupecku
+    public void checkBoxProPosledniSloupec(JTable tabulka) {
+        //checkbox pro posledni sloupecek
+        for (int columnNumber = 7; columnNumber < tabulka.getColumnCount(); columnNumber++) {
+            TableColumn tc = tabulka.getColumnModel().getColumn(columnNumber);
+            tc.setCellEditor(tabulka.getDefaultEditor(Boolean.class));
+            tc.setCellRenderer(tabulka.getDefaultRenderer(Boolean.class));
+            //tc.setHeaderRenderer(new CheckBoxHeader(new MyItemListener(), String.valueOf(columnNumber)));
+        }
+    }
+
+    //naplni tabulku daty
+    public void naplneniTabulkyDaty(JTable tabulka, DefaultTableModel dtm) {
         //hodnoty napsane natvrdo
         //staci jen predelat na for cyklus
         dtm.addRow(new Object[]{"AAA", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
@@ -52,42 +90,25 @@ public class TabulkaCheckbox {
         dtm.addRow(new Object[]{"UNIPE", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
         dtm.addRow(new Object[]{"VIG", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
 
-
-
-        //checkbox pro posledni sloupecek
-        for (int columnNumber = 7; columnNumber < tabulka.getColumnCount(); columnNumber++) {
-            TableColumn tc = tabulka.getColumnModel().getColumn(columnNumber);
-            tc.setCellEditor(tabulka.getDefaultEditor(Boolean.class));
-            tc.setCellRenderer(tabulka.getDefaultRenderer(Boolean.class));
-            //tc.setHeaderRenderer(new CheckBoxHeader(new MyItemListener(), String.valueOf(columnNumber)));
-        }
-        tabulka.setVisible(true);
-        velikostSloupecku(tabulka);
-
-        return tabulka;
     }
 
-    public void velikostSloupecku(JTable tabulka) {
-        tabulka.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        tabulka.getColumnModel().getColumn(0).setPreferredWidth(100);
-        tabulka.getColumnModel().getColumn(1).setPreferredWidth(100);
-        tabulka.getColumnModel().getColumn(2).setPreferredWidth(100);
-        tabulka.getColumnModel().getColumn(3).setPreferredWidth(80);
-        tabulka.getColumnModel().getColumn(4).setPreferredWidth(80);
-        tabulka.getColumnModel().getColumn(5).setPreferredWidth(130);
-        tabulka.getColumnModel().getColumn(6).setPreferredWidth(80);
-        tabulka.getColumnModel().getColumn(7).setPreferredWidth(70);
-       
-        
-//        table.getColumnModel().getColumn(1).setPreferredWidth(120);
-//        table.getColumnModel().getColumn(2).setPreferredWidth(100);
-//        table.getColumnModel().getColumn(3).setPreferredWidth(90);
-//        table.getColumnModel().getColumn(4).setPreferredWidth(90);
-//        table.getColumnModel().getColumn(6).setPreferredWidth(120);
-//        table.getColumnModel().getColumn(7).setPreferredWidth(100);
-//        table.getColumnModel().getColumn(8).setPreferredWidth(95);
-//        table.getColumnModel().getColumn(9).setPreferredWidth(40);
-//        table.getColumnModel().getColumn(10).setPreferredWidth(400);
+    //vytahne data z tabulky, pokud je checkbox zaskrtnuty
+    public void ziskejDataZTabulky(JTable tabulka) {
 
+        //projde radky 
+        for (int i = 0; i < tabulka.getRowCount(); i++) {
+            boolean isChecked = (Boolean) tabulka.getValueAt(i, 7);
+            
+            //pokud je zaskrtnuto,projde sloupecky a vytaha z nich data
+            if (isChecked) {
+                //vytvoreni arrayListu pro ulozeni dat
+                List<String> dataTabulky=new ArrayList<>();
+                //projde sloupecky
+                for(int j=0; j<tabulka.getColumnCount();j++){
+                    dataTabulky.add(dtm.getValueAt(i, j).toString());
+                    System.out.println(dataTabulky.add(dtm.getValueAt(i, j).toString()));
+                }
+            }
+        }
     }
 }

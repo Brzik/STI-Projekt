@@ -25,6 +25,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import model.DataException;
 import model.DatumException;
 import model.FatalException;
@@ -130,7 +131,7 @@ public abstract class GUIAplikace extends JFrame {
         pane.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         if (shouldFill) {
-            //natural height, maximum width
+            
             c.fill = GridBagConstraints.HORIZONTAL;
         }
 
@@ -139,10 +140,71 @@ public abstract class GUIAplikace extends JFrame {
             c.weightx = 0.5;
         }
 
+        layoutProCasUsek(c, pane);
+        layoutProPosledniAktualizaciDat(c, pane);
+        layoutProTabulku(c, pane);
+        layoutProTlacitkaGrafuAktualizace(c, pane);
+        layoutProChyboveHlasky(c, pane);
+    }
+    
+    public void layoutProChyboveHlasky(GridBagConstraints c, Container pane){
+        //chybove hlasky
+        c.gridx = 0;
+        c.gridy = 9;
+        c.gridwidth = 7;
+        c.insets = new Insets(10, 0, 0, 0);
+        c.anchor = GridBagConstraints.PAGE_END;
+        pane.add(error, c);
+    }
+    
+    public void layoutProTlacitkaGrafuAktualizace(GridBagConstraints c, Container pane){
+        //tlacitko pro vykresleni grafu
+        c.gridx = 6;
+        c.gridy = 7;
+        c.gridwidth = 1;
+        pane.add(vykreslitGraf, c);
+
+        //aktualizace dat
+        c.gridx = 6;
+        c.gridy = 8;
+        pane.add(aktualizovatData, c);
+    }
+    
+    public void layoutProTabulku(GridBagConstraints c, Container pane){
+        //tabulka
+        tabulka = new TabulkaCheckbox();
+
+  
+        c.insets = new Insets(20, 10, 10, 10);
+        //c.weighty = 1.0;
+        c.gridx = 0;
+        c.gridwidth = 7;   //nastaveni sirky tabulky
+        c.gridy = 6;
+        pane.add(new JScrollPane(tabulka.tabulkaUI()), c);  //diky JScrollPane se zobrazi nazvy sloupecku
+    }
+    
+    public void layoutProPosledniAktualizaciDat(GridBagConstraints c, Container pane){
+        //datum posledni aktualizace souboru
+        c.insets = new Insets(5, 10, 10, 10);
+        c.gridx = 0;
+        c.gridy = 5;
+        pane.add(datumAktualizaceDat, c);
+
+
+        //JLabel posledniDatum = new JLabel(model.getPosledniDatumVSouboru());
+       
+        JLabel pom = new JLabel("datum");
+        c.gridx = 1;
+        c.gridy = 5;
+        pane.add(pom, c);
+    }
+    
+    public void layoutProCasUsek(GridBagConstraints c, Container pane){
         //zadani casoveho useku
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
+        
         c.insets = new Insets(5, 10, 10, 10);
         pane.add(casovyUsekOd, c);
 
@@ -151,6 +213,7 @@ public abstract class GUIAplikace extends JFrame {
         c.gridx = 1;
         c.gridy = 0;
         c.gridwidth = 1;
+        //c.fill=GridBagConstraints.EAST;
         pane.add(denOdLabel, c);
         
         //den od text
@@ -238,51 +301,6 @@ public abstract class GUIAplikace extends JFrame {
         c.gridwidth = 1;
 //        c.insets = new Insets(5, 10, 10, 10);
         pane.add(casovyUsekOK, c);
-
-
-
-        //datum posledni aktualizace souboru
-        c.insets = new Insets(5, 10, 10, 10);
-        c.gridx = 0;
-        c.gridy = 5;
-        pane.add(datumAktualizaceDat, c);
-
-
-        //JLabel posledniDatum = new JLabel(model.getPosledniDatumVSouboru());
-        JLabel pom = new JLabel("prozatim");
-        c.gridx = 1;
-        c.gridy = 5;
-        pane.add(pom, c);
-
-        //tabulka
-        tabulka = new TabulkaCheckbox();
-
-  
-        c.insets = new Insets(20, 10, 10, 10);
-        //c.weighty = 1.0;
-        c.gridx = 0;
-        c.gridwidth = 7;   //nastaveni sirky tabulky
-        c.gridy = 6;
-        pane.add(new JScrollPane(tabulka.tabulkaUI()), c);  //diky JScrollPane se zobrazi nazvy sloupecku
-
-        //tlacitko pro vykresleni grafu
-        c.gridx = 6;
-        c.gridy = 7;
-        c.gridwidth = 1;
-        pane.add(vykreslitGraf, c);
-
-        //aktualizace dat
-        c.gridx = 6;
-        c.gridy = 8;
-        pane.add(aktualizovatData, c);
-
-        //chybove hlasky
-        c.gridx = 0;
-        c.gridy = 9;
-        c.gridwidth = 7;
-        c.insets = new Insets(10, 0, 0, 0);
-        c.anchor = GridBagConstraints.PAGE_END;
-        pane.add(error, c);
     }
 
     private void vytvorAZobrazGUI() {
@@ -294,8 +312,8 @@ public abstract class GUIAplikace extends JFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //minimalni velikost okna
-        //frame.setMinimumSize(new Dimension(300, 300));
-        frame.setBounds(0, 0, 500, 400);
+       // frame.setMinimumSize(new Dimension(500, 500));
+        //frame.setBounds(0, 0, 600, 300);
         frame.setResizable(false);
 
 
