@@ -183,7 +183,7 @@ public  class TabulkaCheckbox {
 
     }
 
-    //vytahne data z tabulky, pokud je checkbox zaskrtnuty
+    //vytahne data z tabulky, pokud se klikne do libovol radku
     public void ziskejDataZTabulky(JTable tabulka) {
 
         //projde radky 

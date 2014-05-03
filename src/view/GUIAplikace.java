@@ -148,6 +148,8 @@ public abstract class GUIAplikace extends JFrame {
     }
     
     public void layoutProChyboveHlasky(GridBagConstraints c, Container pane){
+        
+       // FatalException chyba=new FatalException(titulekOkna);
         //chybove hlasky
         c.gridx = 0;
         c.gridy = 9;
