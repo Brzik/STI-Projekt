@@ -15,33 +15,31 @@ import model.Model;
  *
  * @author Jan Brzobohatý
  */
-public class Controller {
+public class Controller{
     
-    //Model model;
-    //View view;
-    
-   /* public Controller(Model model, View view) {
-        this.model = model;
-        this.view = view;
-        
-        //načtení dat
-        try {
-            model.aktualizovat();
-        } catch (DataException ex) {
-            
-        } catch (FatalException ex) {
-            
-        }
-        
-        //přidání listenerů pro tlačítka
-       /* this.view.addIntervalListener(new IntervalListener());
-        this.view.addAktualizaceListener(new AktualizaceListener());
-        this.view.addGrafListener(new GrafListener());*/
-        
-        
-   /* }
-    
-    public void setVisible(boolean b) {
-        
-    }*/
-     } 
+//   Model model;
+//   View view;
+//    
+//   public Controller(Model model, View view) {
+//        this.model = model;
+//        this.view = view;
+//        
+//        //načtení dat
+//        try {
+//            model.aktualizovat();
+//        } catch (DataException ex) {
+//            
+//        } catch (FatalException ex) {
+//            
+//        }
+//        
+//        //přidání listenerů pro tlačítka
+//        this.view.addIntervalListener(new IntervalListener());
+//        this.view.addAktualizaceListener(new AktualizaceListener());
+//        this.view.addGrafListener(new GrafListener());
+//   }
+//
+//   public void setVisible(boolean b) {
+//        
+//   }
+} 

@@ -20,34 +20,10 @@ public class STIProjekt {
     public static void main(String[] args) {
 
         Model model = Model.getModel();
-        /*  View view = new View();
-         
+        //View view = new View();
         
-         Controller controller = new Controller(model, view);
-        
-         controller.setVisible(true);*/
-
-        /*
-         * test
-         */
-//        Model model;
-//        ArrayList<Object[]> dataTabulka;
-//        
-//        try {
-//            model = Model.getModel();
-//            System.out.println("adssad");
-//            LocalDate datum = new LocalDate();
-//            dataTabulka = model.getDataTabulka(datum.minusDays(6),datum.minusDays(3));
-//            System.out.println("ha");
-//            model.getDlouhodobyPrumerFirmy("AAA");
-//            System.out.println("dlouhodoby prumer");
-//            model.getDataGraf(datum.minusDays(6), datum.minusDays(3), "CETV");
-//            System.out.println("i graf");
-//            System.out.println(model.getPosledniDatumVSouboru());
-//        } catch (DataException | FatalException | DatumException ex) {
-//            System.err.println(ex.getMessage());
-//        }
-
+        //Controller controller = new Controller(model, view);
+        //controller.setVisible(true);
 
         //test tabulky
 //       TabulkaCheckbox tc=new TabulkaCheckbox();
@@ -55,6 +31,5 @@ public class STIProjekt {
 
       
         akcieGUI ag=new akcieGUI(model);
-
     }
 }
