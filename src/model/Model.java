@@ -8,11 +8,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -37,6 +40,9 @@ public class Model{
     
     //poslední datum v souboru
     private LocalDate posledniDatum;
+    
+    //datum a čas, kdy byla provedena poslední aktualizace
+    private DateTime datumAktualizace;
 
     /**
      * Konstruktor vytvoří instanci pouze instanci.
@@ -163,6 +169,9 @@ public class Model{
         }
         
         transformujNaObjekty(seznamAkcii);
+        
+        //uložení současného data a času
+        ulozDatumAktualizace();
     }
     
     /**
@@ -305,5 +314,54 @@ public class Model{
     public String getPosledniDatumVSouboru(){
         DateTimeFormatter formatter = DateTimeFormat.forPattern("dd. MM. yyyy");
         return posledniDatum.toString(formatter);
+    }
+    
+    /**
+     * @return datum poslední aktualizace
+     * @throws DataException pokud nastala chyba při zapisování do souboru
+     */
+    public DateTime getDatumAktualizace() throws DataException{
+        if(datumAktualizace==null){
+            File file = new File("aktualizace.txt");
+            if (file.exists()){
+                FileReader fr = null;
+                try {
+                    fr = new FileReader(file);
+                    LineNumberReader ln = new LineNumberReader(fr);
+                    while (ln.getLineNumber() == 0){
+                        datumAktualizace = DateTime.parse(ln.readLine());
+                    }
+                }catch (IOException ex) {
+                    throw new DataException("Nastala chyba při zapisování data aktualizace do souboru. (Model->getDatumAktualizace)");
+                }finally{
+                    try{
+                        if(fr!=null){
+                            fr.close();
+                        }
+                    }catch (IOException ex) {
+                        throw new DataException("Nastala chyba při zapisování data aktualizace do souboru. (Model->getDatumAktualizace)");
+                    }
+                }
+            }
+        }
+        return datumAktualizace;
+    }
+    
+    /**
+     * Uloží datum a čas poslední aktualizace do souboru.
+     * @throws DataException pokud nastala chyba při zapisování dat do souboru.
+     */
+    private void ulozDatumAktualizace() throws DataException{
+        //načte současný datum a čas
+        datumAktualizace = new DateTime();
+        
+        //zapíše do souboru
+        try {
+            try (PrintWriter out = new PrintWriter("aktualizace.txt")) {
+                out.println(datumAktualizace.toString());
+            }
+        } catch (FileNotFoundException ex) {
+            throw new DataException("Nastala chyba při zapisování dat do souboru. (Model->ulozDatumAktualizace)");
+        }
     }
 }

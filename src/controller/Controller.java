@@ -4,15 +4,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.DataException;
 import model.DatumException;
 import model.FatalException;
 import model.Model;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 //import view.View;
 
 /**
- *
  * @author Jan Brzobohatý
  */
 public class Controller{
@@ -28,24 +30,18 @@ public class Controller{
         this.model = model;
         this.view = view;
         
-        //načtení dat
-        try{
-            model.aktualizovat();
-        }catch (DataException | FatalException ex) {
-            view.zobrazChybu(ex.getMessage());
-        }
-        
         //přidání listenerů pro tlačítka
         view.addIntervalListener(new TlacitkoIntervalListener());
-        view.addAktualizaceListener(new AktualizaceListener());
-        view.addGrafListener(new GrafListener());
+        view.addAktualizaceListener(new TlacitkoAktualizaceListener());
+        view.addGrafListener(new TlacitkoGrafListener());
    }
 
    /**
-    * Metoda zobrazí GUI. 
+    * Metoda zobrazí GUI a aktualizuje data. 
     */
    public void setVisible() {
        view.setVisible();
+       aktualizovatData();
    }
    
    /**
@@ -66,8 +62,9 @@ public class Controller{
     * @param zacatek začátek období
     * @param konec konec období
     * @param nazevFirmy název firmy
+    * @param dlouhodobyPrumer dlouhodobý průměr firmy
     */
-   private void zobrazGraf(LocalDate zacatek, LocalDate konec, String nazevFirmy){
+   private void zobrazGraf(LocalDate zacatek, LocalDate konec, String nazevFirmy, double dlouhodobyPrumer){
        try {
            view.zobrazGraf(model.getDataGraf(zacatek,konec,nazevFirmy));
        } catch (DataException | DatumException | FatalException ex) {
@@ -75,11 +72,65 @@ public class Controller{
        }
    }
    
-   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-   private void zobrazDatumAktualizace(){
-       view.zobrazDatumAktualizace();
+   /**
+    * Aktualizuje data v programu a zobrazí data v tabulce.
+    */
+   private void aktualizovatData(){
+       view.vypnoutTlacitka();
+       view.zobrazChybu("Aktualizuji data ...");
+       try {
+           model.aktualizovat();
+           if(!(zacatekObdobi==null||konecObdobi==null)){
+               pushDataToTable(zacatekObdobi, konecObdobi);
+               zobrazDatumAktualizace();
+           }
+           view.zobrazChybu("Aktualizace proběhla v pořádku.");
+       } catch (DataException ex) {
+           view.zobrazChybu(ex.getMessage());
+       } catch (FatalException ex) {
+           view.smazTabulku();
+           view.zobrazChybu(ex.getMessage());
+       }
+       view.zapnoutTlacitka();
    }
    
+   
+   private void zobrazDatumAktualizace(){
+       //zda je soubor aktualni
+       boolean aktualni = true;
+       
+       //datum poslední aktualizace dat
+       DateTime datumAktualizace = null;
+       
+       //současný datum a čas
+       DateTime soucasny = new DateTime();
+       
+       try {
+           datumAktualizace = model.getDatumAktualizace();
+       } catch (DataException ex) {
+           view.zobrazChybu(ex.getMessage());
+       }
+       
+       if(datumAktualizace==null){
+           aktualni=false;
+       }else{
+           if(datumAktualizace.getMonthOfYear()==soucasny.getMonthOfYear() && 
+              datumAktualizace.getYear()==soucasny.getYear()){
+              if(datumAktualizace.getDayOfMonth()==soucasny.getDayOfMonth()){
+                  
+              }  
+           }else{
+              aktualni=false;
+           }
+       }
+       
+       view.zobrazDatumAktualizace(model.getPosledniDatumVSouboru(),aktualni);
+   }
+   
+   /**
+    * Listener pro stisknutí tlačítka pro potvrzení zadaného intervalu.
+    * Při stisknutí načte daný interval, zvaliduje, uloží a zobrazí odpovídající data.
+    */
    private class TlacitkoIntervalListener implements ActionListener{
 
         @Override
@@ -88,6 +139,7 @@ public class Controller{
             //dodelat validaci
             zacatekObdobi = new LocalDate(view.getZacatekRok(), view.getZacatekMesic(), view.getZacatekDen());
             konecObdobi = new LocalDate(view.getKonecRok(), view.getKonecMesic(), view.getKonecDen());
+            pushDataToTable(zacatekObdobi, konecObdobi);
         }
    }
    
@@ -106,14 +158,41 @@ public class Controller{
             //název jedné firmy
             String nazevFirmy;
             
+            //dlouhodobý průměr firmy
+            double dlouhodobyPrumer;
+            
             firmy = view.getZaskrtnuteFirmy();
+            
+            if(firmy.isEmpty()){
+                view.zobrazChybu("Nejsou vybrány žádné firmy pro vykreslení.");
+                return;
+            }
+            
             iteratorFirem = firmy.iterator();
             
             //zobrazení jednoho grafu pro jednu firmu
             while(iteratorFirem.hasNext()){
                 nazevFirmy = (String)iteratorFirem.next();
-                zobrazGraf(zacatekObdobi, konecObdobi, nazevFirmy);
+                try {
+                    dlouhodobyPrumer = model.getDlouhodobyPrumerFirmy(nazevFirmy);
+                } catch (DataException | FatalException ex) {
+                    view.zobrazChybu(ex.getMessage());
+                    continue;
+                }
+                zobrazGraf(zacatekObdobi, konecObdobi, nazevFirmy, dlouhodobyPrumer);
             }
+        }
+   }
+   
+   /**
+    * Listener pro stisknutí tlačítka pro aktualizaci dat.
+    * Při stisknutí se aktualizují a zobrazí data.
+    */
+   private class TlacitkoAktualizaceListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent stisk) {
+            aktualizovatData();
         }
    }
 }
