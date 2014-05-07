@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import model.DataException;
 import model.DatumException;
 import model.FatalException;
@@ -94,7 +92,10 @@ public class Controller{
        view.zapnoutTlacitka();
    }
    
-   
+   /*
+    * Metoda zjistí, zda je poslední aktualizace opravdu aktuální k dnešnímu datu
+    * a zobrazí poslední datum v souboru.
+    */
    private void zobrazDatumAktualizace(){
        //zda je soubor aktualni
        boolean aktualni = true;
@@ -111,13 +112,32 @@ public class Controller{
            view.zobrazChybu(ex.getMessage());
        }
        
+       /*
+        * Ověří, jestli jsou data aktuální. (Pokud ještě nebylo 20:15, tak data 
+        * jsou aktuální, pokud byl soubor stažen dnes před 20:15 nebo včera po 20:15. 
+        * V případě, že je po 20:15, tak musí být soubor stažen dnes po 20:15.)
+        */
        if(datumAktualizace==null){
            aktualni=false;
        }else{
            if(datumAktualizace.getMonthOfYear()==soucasny.getMonthOfYear() && 
               datumAktualizace.getYear()==soucasny.getYear()){
               if(datumAktualizace.getDayOfMonth()==soucasny.getDayOfMonth()){
-                  
+                  if(soucasny.getHourOfDay()<20||(soucasny.getHourOfDay()==20&&soucasny.getHourOfDay()<=15)){
+                      if(datumAktualizace.getHourOfDay()<20||(datumAktualizace.getHourOfDay()==20&&datumAktualizace.getHourOfDay()<=15)){
+                          aktualni=true;
+                      }
+                  }else{
+                      if(datumAktualizace.getHourOfDay()>20||(datumAktualizace.getHourOfDay()==20&&datumAktualizace.getHourOfDay()>15)){
+                          aktualni=true;
+                      }
+                  }
+              }else if(datumAktualizace.getDayOfMonth()==(soucasny.minusDays(1).getDayOfMonth())){
+                  if(soucasny.getHourOfDay()<20||(soucasny.getHourOfDay()==20&&soucasny.getHourOfDay()<=15)){
+                      if(datumAktualizace.getHourOfDay()>20||(datumAktualizace.getHourOfDay()==20&&datumAktualizace.getHourOfDay()>15)){
+                          aktualni=true;
+                      }
+                  }
               }  
            }else{
               aktualni=false;
