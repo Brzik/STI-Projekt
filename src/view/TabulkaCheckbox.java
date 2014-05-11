@@ -21,13 +21,17 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
+import model.DataException;
+import model.DatumException;
+import model.FatalException;
 import model.Model;
+import org.joda.time.LocalDate;
 
 /**
  *
  * @author Michaela
  */
-public  class TabulkaCheckbox {
+public class TabulkaCheckbox {
 
     //nazvy sloupecku tabulky
     private String prvni = "Zkratka firmy", druhy = "Průměrná cena", treti = "Průměrný objem";
@@ -36,10 +40,10 @@ public  class TabulkaCheckbox {
     Object jmenaSloupcu[] = {prvni, druhy, treti, ctvrty, paty, sesty, sedmy, osmy};
     Object data[][] = {};
     DefaultTableModel dtm;
-     JTable tabulka;
+    JTable tabulka;
     Model model = Model.getModel();
 
-    public JTable tabulkaUI() {
+    public JTable tabulkaUI() throws DataException, FatalException, DatumException {
         dtm = new DefaultTableModel(data, jmenaSloupcu);
         tabulka = new JTable(dtm);
 
@@ -47,10 +51,18 @@ public  class TabulkaCheckbox {
         checkBoxProPosledniSloupec(tabulka);
         velikostSloupecku(tabulka);
         cteniRadku();
-        
-        tabulka.setVisible(true);
-        
 
+        tabulka.setVisible(true);
+
+
+        return tabulka;
+    }
+    //zobrazi prazdnou tabulku
+
+    protected JTable prazdnaTabulka() {
+        dtm = new DefaultTableModel(data, jmenaSloupcu);
+        tabulka = new JTable(dtm);
+        tabulka.setVisible(true);
         return tabulka;
     }
 
@@ -68,9 +80,9 @@ public  class TabulkaCheckbox {
 
 
     }
-    
-   public void cteniRadku() { 
-        
+
+    public void cteniRadku() {
+
         ListSelectionModel selectionModel = tabulka.getSelectionModel();
         selectionModel.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);  //mozna to bude chtit multiple selection
         selectionModel.addListSelectionListener(new RowListener(this));
@@ -79,7 +91,7 @@ public  class TabulkaCheckbox {
     class RowListener implements ListSelectionListener {
 
         TabulkaCheckbox ctiRadek;
-        
+
         public RowListener(TabulkaCheckbox ctiR) {
             ctiRadek = ctiR;
             tabulka = ctiRadek.tabulka;
@@ -97,7 +109,7 @@ public  class TabulkaCheckbox {
         private void zobrazDataZVybranehoRadku(int indexRadku) {
             int sloupecky = tabulka.getColumnCount();
             String s = "";
-            for (int i = 0; i < sloupecky-1; i++) {
+            for (int i = 0; i < sloupecky - 1; i++) {
                 Object o = tabulka.getValueAt(indexRadku, i);
                 s += o.toString();
                 if (i < sloupecky - 1) {
@@ -108,7 +120,7 @@ public  class TabulkaCheckbox {
             System.out.println(s);
         }
     }
-    
+
 //    public void tabulkaListener(JTable tabulka){
 //        tabulka.getModel().addTableModelListener(new TableModelListener() {
 //            JTable tabulka;
@@ -122,7 +134,6 @@ public  class TabulkaCheckbox {
 //            }
 //        });
 //    }
-
 //    public void tabulkaListener(JTable tabulka) {
 //        tabulka.setCellSelectionEnabled(true);
 //        ListSelectionModel cellSelectionModel = tabulka.getSelectionModel();
@@ -149,8 +160,6 @@ public  class TabulkaCheckbox {
 //            }
 //        });
 //    }
-  
-
     //prida checkbox do posledniho sloupecku
     public void checkBoxProPosledniSloupec(JTable tabulka) {
         //checkbox pro posledni sloupecek
@@ -163,23 +172,39 @@ public  class TabulkaCheckbox {
     }
 
     //naplni tabulku daty
-    public void naplneniTabulkyDaty(JTable tabulka, DefaultTableModel dtm) {
+    public void naplneniTabulkyDaty(JTable tabulka, DefaultTableModel dtm) throws DataException, DatumException, FatalException {
+        LocalDate zacatek, konec;
+        zacatek = new LocalDate();
+        konec=new LocalDate();
+        for (int i = 0; i < 14; i++) {
+//            String zkratkaFirmy, prumCena, prumObjem, max, min, dlouhPrum, kupovat;
+//            zkratkaFirmy="AAA";
+//            prumCena="100";
+//            prumObjem="1500";
+//            max="450";
+//            min="210";
+//            dlouhPrum="360";
+//            kupovat="ano";
+            dtm.addRow(new Object[]{model.getDataTabulka(zacatek, konec), new Boolean(false)});
+        }
+
         //hodnoty napsane natvrdo
         //staci jen predelat na for cyklus
-        dtm.addRow(new Object[]{"AAA", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"CETV", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"CEZ", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"ERBAG", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"FOREG", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"KOMB", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"NWRUK", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"ORCO", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"PEGAS", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"TABAK", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"TELEC", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"TMR", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"UNIPE", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
-        dtm.addRow(new Object[]{"VIG", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"AAA", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"CETV", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"CEZ", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"ERBAG", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"FOREG", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"KOMB", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"NWRUK", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"ORCO", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"PEGAS", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"TABAK", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"TELEC", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"TMR", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"UNIPE", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+//        dtm.addRow(new Object[]{"VIG", "Prum cena", "prum objem", "max", "min", "dlouhodob prum", "kupovat", new Boolean(false)});
+
 
     }
 
@@ -202,6 +227,4 @@ public  class TabulkaCheckbox {
             }
         }
     }
-
-   
 }

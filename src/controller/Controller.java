@@ -10,7 +10,7 @@ import model.FatalException;
 import model.Model;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-//import view.View;
+import view.View;
 
 /**
  * @author Jan Brzobohatý
@@ -151,7 +151,7 @@ public class Controller{
     * Listener pro stisknutí tlačítka pro potvrzení zadaného intervalu.
     * Při stisknutí načte daný interval, zvaliduje, uloží a zobrazí odpovídající data.
     */
-   private class TlacitkoIntervalListener implements ActionListener{
+   public class TlacitkoIntervalListener implements ActionListener{
 
         @Override
         public void actionPerformed(ActionEvent stisk) {
@@ -167,7 +167,7 @@ public class Controller{
     * Listener pro stisknutí tláčítka pro zobrazaní grafů firem.
     * Při stisknutí zobrazí pro každou zaškrtnutou firmu jeden graf.
     */
-   private class TlacitkoGrafListener implements ActionListener{
+   public class TlacitkoGrafListener implements ActionListener{
 
         @Override
         public void actionPerformed(ActionEvent stisk) {
@@ -208,7 +208,7 @@ public class Controller{
     * Listener pro stisknutí tlačítka pro aktualizaci dat.
     * Při stisknutí se aktualizují a zobrazí data.
     */
-   private class TlacitkoAktualizaceListener implements ActionListener{
+   public class TlacitkoAktualizaceListener implements ActionListener{
 
         @Override
         public void actionPerformed(ActionEvent stisk) {
