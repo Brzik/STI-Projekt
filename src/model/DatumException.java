@@ -23,7 +23,7 @@ public class DatumException extends Exception {
      */
     public DatumException(String hlaska) {
         
-        error = new akcieGUI(Model.model);
+        error = new akcieGUI();
         error.setTitle("Error: " + hlaska);
 //        super("Error: " + hlaska);
     }

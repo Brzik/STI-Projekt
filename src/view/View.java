@@ -6,6 +6,9 @@ package view;
 
 import controller.Controller;
 import java.util.ArrayList;
+import model.DataException;
+import model.DatumException;
+import model.FatalException;
 import model.Model;
 
 /**
@@ -14,8 +17,12 @@ import model.Model;
  */
 public class View {
     
-    Model model=Model.getModel();
-    akcieGUI akcie=new akcieGUI(model);
+    //Model model=Model.getModel();
+    akcieGUI akcie;
+
+    public View()  {
+     this.akcie  =new akcieGUI();
+    }
      
     
     //listenery pro tlacitka
@@ -32,7 +39,7 @@ public class View {
     }
 
     //metoda vlozi data do tabulky
-    public void pushDataToTable(ArrayList<Object[]> dataTabulka) {
+    public void pushDataToTable(ArrayList<Object[]> dataTabulka) throws DataException, FatalException, DatumException {
         akcie.zobrazPlnouTabulku();
     }
 
@@ -66,8 +73,9 @@ public class View {
   
 
     //zobrazi GUI
-    public void setVisible() {
-      akcieGUI ag=new akcieGUI(model);
+    public void setVisible()  {
+      akcieGUI ag=new akcieGUI();
+      
     }
     
     //getry
@@ -87,6 +95,7 @@ public class View {
         return akcie.getKonecMesic();
     }
     public int getKonecDen(){
+        //System.out.println(akcie.getKonecDen());
         return akcie.getKonecDen();
     }
       public ArrayList<String> getZaskrtnuteFirmy() {

@@ -58,11 +58,11 @@ public abstract class GUIAplikace extends JFrame {
 
    
 
-    public GUIAplikace(Model model) throws DataException, FatalException, DatumException {
+    public GUIAplikace()  {
          vytvorAZobrazGUI();
     }
 
-    public void pridejKomponentu(Container pane) throws DataException, FatalException, DatumException {
+    public void pridejKomponentu(Container pane)  {
 
 
         nastavKomponenty();
@@ -165,7 +165,7 @@ public abstract class GUIAplikace extends JFrame {
         aktualizovatData = new JButton("Aktualizuj data");   //aktualizace dat
     }
 
-    public void zobrazTabulku(Container pane) throws DataException, FatalException, DatumException {
+    public void zobrazTabulku(Container pane)  {
         //razeni zprava doleva
         if (RIGHT_TO_LEFT) {
             pane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -216,7 +216,7 @@ public abstract class GUIAplikace extends JFrame {
         pane.add(aktualizovatData, c);
     }
 
-    public void layoutProTabulku(GridBagConstraints c, Container pane) throws DataException, FatalException, DatumException {
+    public void layoutProTabulku(GridBagConstraints c, Container pane) {
         //tabulka
         tabulka = new TabulkaCheckbox();
 
@@ -354,11 +354,11 @@ public abstract class GUIAplikace extends JFrame {
         tabulka.prazdnaTabulka();
     }
     //zobrazi tabulku s daty
-    protected void zobrazPlnouTabulku() throws DataException, FatalException, DatumException{
+    protected void zobrazPlnouTabulku() {
         tabulka.tabulkaUI();
     }
 
-    protected void vytvorAZobrazGUI() throws DataException, FatalException, DatumException {
+    protected void vytvorAZobrazGUI()  {
         //pokud bychom chteli hezci okno,staci odkomentovat
         //JFrame.setDefaultLookAndFeelDecorated(true);
 

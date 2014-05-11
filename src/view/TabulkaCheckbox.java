@@ -41,9 +41,9 @@ public class TabulkaCheckbox {
     Object data[][] = {};
     DefaultTableModel dtm;
     JTable tabulka;
-    Model model = Model.getModel();
+    //Model model = Model.getModel();
 
-    public JTable tabulkaUI() throws DataException, FatalException, DatumException {
+    public JTable tabulkaUI() {
         dtm = new DefaultTableModel(data, jmenaSloupcu);
         tabulka = new JTable(dtm);
 
@@ -172,7 +172,7 @@ public class TabulkaCheckbox {
     }
 
     //naplni tabulku daty
-    public void naplneniTabulkyDaty(JTable tabulka, DefaultTableModel dtm) throws DataException, DatumException, FatalException {
+    public void naplneniTabulkyDaty(JTable tabulka, DefaultTableModel dtm)  {
         LocalDate zacatek, konec;
         zacatek = new LocalDate();
         konec=new LocalDate();
@@ -185,7 +185,7 @@ public class TabulkaCheckbox {
 //            min="210";
 //            dlouhPrum="360";
 //            kupovat="ano";
-            dtm.addRow(new Object[]{model.getDataTabulka(zacatek, konec), new Boolean(false)});
+            //dtm.addRow(new Object[]{model.getDataTabulka(zacatek, konec), new Boolean(false)});
         }
 
         //hodnoty napsane natvrdo

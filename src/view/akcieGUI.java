@@ -4,6 +4,9 @@
  */
 package view;
 
+import model.DataException;
+import model.DatumException;
+import model.FatalException;
 import model.Model;
 
 /**
@@ -12,8 +15,8 @@ import model.Model;
  */
 public class akcieGUI extends GUIAplikace{
 
-    public akcieGUI(Model model) {
-        super(model);
+    public akcieGUI()  {
+        super();
     }
     
     
