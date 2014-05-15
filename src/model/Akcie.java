@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Date;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -111,11 +112,9 @@ class Akcie {
     }
     
     /**
-     * @return datum jako řetězec ve formátu "dd. mm. yyyy"
+     * @return datum jako formát Date"
      */
-    public String getDatumToString(){
-        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd. MM. yyyy");
-
-        return datum.toString(formatter);
+    public Date getDatumToDate(){
+        return datum.toDate();
     }
 }

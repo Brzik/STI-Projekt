@@ -65,7 +65,7 @@ class Firmy {
      * <tr><th>3</th><th>odchylka od min</th><th>double</th></tr>
      * <tr><th>4</th><th>odchylka od max</th><th>double</th></tr>
      * <tr><th>5</th><th>odchylka od dlouh. prům.</th><th>double</th></tr>
-     * <tr><th>6</th><th>koupit</th><th>boolean</th></tr>
+     * <tr><th>6</th><th>koupit</th><th>String</th></tr>
      * </table>
      * 
      * @throws DatumException pokud datum zacatek je chronologicky az po datumu 
@@ -110,9 +110,10 @@ class Firmy {
     
     /**
      * Metoda nastaví předanému seznamu firem pro každou firmu v poli dat na 
-     * indexu 6 boolean hodnotu. Respektive v případě, že má firma
+     * indexu 6 hodnotu "koupit" v případě, že je výhodná ke koupi. 
+     * Respektive v případě, že má firma
      * největší propad ze všech firem za poslední 3 dny, tak je jí nastavena
-     * položka "koupit" (6. položka) na true, jinak false.
+     * položka "koupit" (6. položka) na "koupit", jinak "".
      * 
      * @param seznamFirem seznam polí dat pro firmy
      */
@@ -172,19 +173,19 @@ class Firmy {
             }
         }
         
-        //nastavení všech firem na koupit=false
+        //nastavení všech firem na koupit=""
         iteratorSeznaFirem = seznamFirem.iterator();
         while(iteratorSeznaFirem.hasNext()){            
             firma = (Object[])iteratorSeznaFirem.next();
-            firma[6] = false;
+            firma[6] = "";
         }
         
         iteratorMaxList = maxList.iterator();
         
-        //nastavení těch firem, které mají největší propad na koupit=true
+        //nastavení těch firem, které mají největší propad na koupit="koupit"
         while(iteratorMaxList.hasNext()){            
             firma = (Object[])iteratorMaxList.next();
-            firma[6] = true;
+            firma[6] = "koupit";
         }
     }
     
@@ -218,7 +219,7 @@ class Firmy {
      * @return dvourozměrné pole reprezentující graf (množinu uspořádaných dvojic),
      * kde první souřadnice představuje jednotlivé uspořádané dvojice a druhá 
      * souřadnice představuje indexování v uspořádané dvojici. První člen (index=0) 
-     * ve dvojici je datum jako textový řetězec ve formátu "dd. mm. yyyy" 
+     * ve dvojici je datum ve formátu Date 
      * a druhý člen (index 1) je průmerná cena (double) k tomuto datu. Množina je 
      * uspořádána chronologicky podle data.
      * 

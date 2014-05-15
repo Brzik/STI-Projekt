@@ -9,22 +9,23 @@ import model.DatumException;
 import model.FatalException;
 import model.Model;
 import org.joda.time.DateTime;
+import org.joda.time.IllegalFieldValueException;
 import org.joda.time.LocalDate;
-import view.View;
+import view.GUI;
 
 /**
  * @author Jan Brzobohatý
  */
 public class Controller{
-    
+   
    Model model;
-   View view;
+   GUI view;
    
    //začátek a konec období, pro které chceme data
    LocalDate zacatekObdobi;
    LocalDate konecObdobi;
     
-   public Controller(Model model, View view) {
+   public Controller(Model model, GUI view) {
         this.model = model;
         this.view = view;
         
@@ -37,8 +38,8 @@ public class Controller{
    /**
     * Metoda zobrazí GUI a aktualizuje data. 
     */
-   public void setVisible() {
-       view.setVisible();
+   public void setVisible(boolean zviditelnit) {
+       view.setVisible(zviditelnit);
        aktualizovatData();
    }
    
@@ -49,6 +50,7 @@ public class Controller{
     */
    private void pushDataToTable(LocalDate zacatek, LocalDate konec){
        try {
+           view.smazTabulku();
            view.pushDataToTable(model.getDataTabulka(zacatek, konec));
        } catch (DataException | DatumException | FatalException ex) {
            view.zobrazChybu(ex.getMessage());
@@ -64,7 +66,7 @@ public class Controller{
     */
    private void zobrazGraf(LocalDate zacatek, LocalDate konec, String nazevFirmy, double dlouhodobyPrumer){
        try {
-           view.zobrazGraf(model.getDataGraf(zacatek,konec,nazevFirmy));
+           view.zobrazGraf(model.getDataGraf(zacatek,konec,nazevFirmy),dlouhodobyPrumer, nazevFirmy);
        } catch (DataException | DatumException | FatalException ex) {
            view.zobrazChybu(ex.getMessage());
        }
@@ -75,21 +77,20 @@ public class Controller{
     */
    private void aktualizovatData(){
        view.vypnoutTlacitka();
+       view.smazTabulku();
        view.zobrazChybu("Aktualizuji data ...");
        try {
            model.aktualizovat();
+           view.zobrazChybu("Aktualizace proběhla v pořádku.");
+       } catch (DataException | FatalException ex) {
+           view.zobrazChybu(ex.getMessage());
+       }finally{
+           view.zapnoutTlacitka();
+           zobrazDatumAktualizace();
            if(!(zacatekObdobi==null||konecObdobi==null)){
                pushDataToTable(zacatekObdobi, konecObdobi);
-               zobrazDatumAktualizace();
            }
-           view.zobrazChybu("Aktualizace proběhla v pořádku.");
-       } catch (DataException ex) {
-           view.zobrazChybu(ex.getMessage());
-       } catch (FatalException ex) {
-           view.smazTabulku();
-           view.zobrazChybu(ex.getMessage());
-       }
-       view.zapnoutTlacitka();
+       }   
    }
    
    /*
@@ -155,11 +156,14 @@ public class Controller{
 
         @Override
         public void actionPerformed(ActionEvent stisk) {
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //dodelat validaci
-            zacatekObdobi = new LocalDate(view.getZacatekRok(), view.getZacatekMesic(), view.getZacatekDen());
-            konecObdobi = new LocalDate(view.getKonecRok(), view.getKonecMesic(), view.getKonecDen());
-            pushDataToTable(zacatekObdobi, konecObdobi);
+            try{
+                view.smazChyby();
+                zacatekObdobi = new LocalDate(view.getZacatekRok(), view.getZacatekMesic(), view.getZacatekDen());
+                konecObdobi = new LocalDate(view.getKonecRok(), view.getKonecMesic(), view.getKonecDen());
+                pushDataToTable(zacatekObdobi, konecObdobi);
+            }catch(IllegalFieldValueException ex){
+                view.zobrazChybu("Špatně zadaný vstup: " + ex.getMessage());
+            }
         }
    }
    
@@ -180,6 +184,8 @@ public class Controller{
             
             //dlouhodobý průměr firmy
             double dlouhodobyPrumer;
+            
+            view.smazChyby();
             
             firmy = view.getZaskrtnuteFirmy();
             
@@ -212,7 +218,15 @@ public class Controller{
 
         @Override
         public void actionPerformed(ActionEvent stisk) {
-            aktualizovatData();
+            (new Thread(new AktualizaceThread())).start();
         }
    }
+   
+   public class AktualizaceThread implements Runnable {
+
+        @Override
+        public void run() {
+            aktualizovatData();
+        }
+    }
 }

@@ -325,7 +325,7 @@ class Firma {
      * @return dvourozměrné pole reprezentující graf (množinu uspořádaných dvojic),
      * kde první souřadnice představuje jednotlivé uspořádané dvojice a druhá 
      * souřadnice představuje indexování v uspořádané dvojici. První člen (index=0) 
-     * ve dvojici je datum jako textový řetězec ve formátu "dd. mm. yyyy" 
+     * ve dvojici je datum ve formátu Date 
      * a druhý člen (index 1) je průmerná cena (double) k tomuto datu. Množina je 
      * uspořádána chronologicky podle data.
      * 
@@ -381,10 +381,10 @@ class Firma {
         mnozinaDvojic = new Object[vybraneAkcie.size()][2];
         for(int i=0;i<mnozinaDvojic.length;i++){
             jednaAkcie = (Akcie)iteratorAkcii.next();
-            mnozinaDvojic[i][0] = jednaAkcie.getDatumToString();
+            mnozinaDvojic[i][0] = jednaAkcie.getDatumToDate();
             mnozinaDvojic[i][1] = jednaAkcie.getPrumernaCena();
         }
-         
+        
         return mnozinaDvojic;
     }
 }

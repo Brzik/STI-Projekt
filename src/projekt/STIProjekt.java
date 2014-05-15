@@ -2,16 +2,13 @@ package projekt;
 
 import controller.Controller;
 import model.Model;
-import view.GUIAplikace;
-import view.TabulkaCheckbox;
-import view.View;
-import view.akcieGUI;
+import view.GUI;
 
 //import view.View;
 
 /**
  *
- * @author Brzik
+ * @author Jan Brzobohatý
  */
 public class STIProjekt {
 
@@ -19,18 +16,18 @@ public class STIProjekt {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
+        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                GUI view = GUI.getGUI();
+//            }
+//        });
+        
         Model model = Model.getModel();
-        View view = new View();
+        GUI view = GUI.getGUI();
         
         Controller controller = new Controller(model, view);
-        //controller.setVisible(true);
-
-        //test tabulky
-//       TabulkaCheckbox tc=new TabulkaCheckbox();
-//        tc.tabulkaGUI();
-
-      
-        //akcieGUI ag=new akcieGUI(model);
+        controller.setVisible(true);
     }
 }

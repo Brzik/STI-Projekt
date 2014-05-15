@@ -32,6 +32,6 @@ public class AkcieTest {
     public void testGetDatumToString() throws FatalException {
         LocalDate datum = new LocalDate();
         akcie = new Akcie(5, 4, 2, 1, datum, "firma", 4);
-        System.out.println(akcie.getDatumToString()+ " ..... " +datum.toString());
+        System.out.println(akcie.getDatumToDate()+ " ..... " +datum.toString());
     }
 }

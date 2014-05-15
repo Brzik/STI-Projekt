@@ -72,9 +72,13 @@ public class Model{
      * @throws FatalException pokud data nejsou validní
      */
     public final void aktualizovat() throws DataException, FatalException{
-        stahnoutSoubor();
-        clear();
-        nacistSoubor();
+        try{
+            stahnoutSoubor();
+        }catch(DataException ex){
+            clear();
+            nacistSoubor();
+            throw ex;
+        }
     }
    
     /**
@@ -248,7 +252,7 @@ public class Model{
      * <tr><th>3</th><th>odchylka od min</th><th>double</th></tr>
      * <tr><th>4</th><th>odchylka od max</th><th>double</th></tr>
      * <tr><th>5</th><th>odchylka od dlouh. prům.</th><th>double</th></tr>
-     * <tr><th>6</th><th>koupit</th><th>boolean</th></tr>
+     * <tr><th>6</th><th>koupit</th><th>String</th></tr>
      * </table>
      * 
      * @throws DatumException pokud datum zacatek je chronologicky az po datumu 
@@ -267,7 +271,7 @@ public class Model{
      * @return dvourozměrné pole reprezentující graf (množinu uspořádaných dvojic),
      * kde první souřadnice představuje jednotlivé uspořádané dvojice a druhá 
      * souřadnice představuje indexování v uspořádané dvojici. První člen (index=0) 
-     * ve dvojici je datum jako textový řetězec ve formátu "dd. mm. yyyy" 
+     * ve dvojici je datum veformátu Date 
      * a druhý člen (index 1) je průmerná cena (double) k tomuto datu. Množina je 
      * uspořádána chronologicky podle data.
      * 
