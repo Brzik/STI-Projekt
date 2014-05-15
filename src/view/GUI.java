@@ -83,7 +83,6 @@ public class GUI extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(600, 500));
 
         denOdText.setColumns(2);
-        denOdText.setText("4");
 
         jLabel1.setText("Časový úsek od");
 
@@ -94,27 +93,22 @@ public class GUI extends javax.swing.JFrame {
         jLabel4.setText("měsíc:");
 
         mesicOdText.setColumns(2);
-        mesicOdText.setText("4");
 
         jLabel6.setText("rok:");
 
         rokOdText.setColumns(4);
-        rokOdText.setText("2014");
 
         jLabel7.setText("den:");
 
         denDoText.setColumns(2);
-        denDoText.setText("5");
 
         jLabel8.setText("měsíc:");
 
         mesicDoText.setColumns(2);
-        mesicDoText.setText("5");
 
         jLabel9.setText("rok:");
 
         rokDoText.setColumns(4);
-        rokDoText.setText("2014");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -192,7 +186,6 @@ public class GUI extends javax.swing.JFrame {
         vykreslitGraf.setText("Vykreslit Graf");
 
         tabulka.setModel(modelTabulky);
-        tabulka.setEnabled(false);
         tabulka.setMinimumSize(new java.awt.Dimension(60, 20));
         jScrollPane1.setViewportView(tabulka);
 

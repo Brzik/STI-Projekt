@@ -79,6 +79,8 @@ public class Model{
             nacistSoubor();
             throw ex;
         }
+        clear();
+        nacistSoubor();
     }
    
     /**
