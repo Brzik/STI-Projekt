@@ -60,7 +60,11 @@ public class Controller{
        try {
            view.smazTabulku();
            view.pushDataToTable(model.getDataTabulka(zacatek, konec));
-       } catch (DataException | DatumException | FatalException ex) {
+       }catch (DataException ex) {
+           view.zobrazChybu(ex.getMessage());
+       }catch(DatumException ex){
+           view.zobrazChybu(ex.getMessage());
+       }catch(FatalException ex){
            view.zobrazChybu(ex.getMessage());
        }
    }
@@ -75,7 +79,11 @@ public class Controller{
    private void zobrazGraf(LocalDate zacatek, LocalDate konec, String nazevFirmy, double dlouhodobyPrumer){
        try {
            view.zobrazGraf(model.getDataGraf(zacatek,konec,nazevFirmy),dlouhodobyPrumer, nazevFirmy);
-       } catch (DataException | DatumException | FatalException ex) {
+       }catch (DataException ex) {
+           view.zobrazChybu(ex.getMessage());
+       }catch(DatumException ex){
+           view.zobrazChybu(ex.getMessage());
+       }catch(FatalException ex){
            view.zobrazChybu(ex.getMessage());
        }
    }
@@ -90,7 +98,9 @@ public class Controller{
        try {
            model.aktualizovat();
            view.zobrazChybu("Aktualizace proběhla v pořádku.");
-       } catch (DataException | FatalException ex) {
+       } catch (FatalException ex) {
+           view.zobrazChybu(ex.getMessage());
+       }catch (DataException ex) {
            view.zobrazChybu(ex.getMessage());
        }finally{
            view.zapnoutTlacitka();
@@ -121,7 +131,7 @@ public class Controller{
    */
    private boolean isAktualni(){
        //zda je soubor aktualni
-       boolean aktualni = true;
+       boolean aktualni = false;
        
        //datum poslední aktualizace dat
        DateTime datumAktualizace = null;
@@ -135,11 +145,8 @@ public class Controller{
            view.zobrazChybu(ex.getMessage());
        }
        
-       if(datumAktualizace==null){
-           aktualni=false;
-       }else{
-           if(datumAktualizace.getMonthOfYear()==soucasny.getMonthOfYear() && 
-              datumAktualizace.getYear()==soucasny.getYear()){
+       if(datumAktualizace!=null){
+           if(datumAktualizace.getMonthOfYear()==soucasny.getMonthOfYear() && datumAktualizace.getYear()==soucasny.getYear()){
               if(datumAktualizace.getDayOfMonth()==soucasny.getDayOfMonth()){
                   if(soucasny.getHourOfDay()<20||(soucasny.getHourOfDay()==20&&soucasny.getHourOfDay()<=15)){
                       if(datumAktualizace.getHourOfDay()<20||(datumAktualizace.getHourOfDay()==20&&datumAktualizace.getHourOfDay()<=15)){
@@ -157,8 +164,6 @@ public class Controller{
                       }
                   }
               }  
-           }else{
-              aktualni=false;
            }
        }
        return aktualni;
@@ -217,7 +222,10 @@ public class Controller{
                 nazevFirmy = (String)iteratorFirem.next();
                 try {
                     dlouhodobyPrumer = model.getDlouhodobyPrumerFirmy(nazevFirmy);
-                } catch (DataException | FatalException ex) {
+                } catch (FatalException ex) {
+                    view.zobrazChybu(ex.getMessage());
+                    continue;
+                }catch (DataException ex) {
                     view.zobrazChybu(ex.getMessage());
                     continue;
                 }

@@ -148,6 +148,9 @@ public class Model{
                 throw new DataException("Při stahování souboru nastala chyba. (Model->stahnoutSoubor)");
              }
          }
+         
+         //uložení současného data a času
+         ulozDatumAktualizace();
     }
 
     /**
@@ -175,9 +178,6 @@ public class Model{
         }
         
         transformujNaObjekty(seznamAkcii);
-        
-        //uložení současného data a času
-        ulozDatumAktualizace();
     }
     
     /**
@@ -365,7 +365,7 @@ public class Model{
         datumAktualizace = new DateTime();
         
         //zapíše do souboru
-        try {
+        try{
             try (PrintWriter out = new PrintWriter("aktualizace.txt")) {
                 out.println(datumAktualizace.toString());
             }
