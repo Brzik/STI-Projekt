@@ -319,7 +319,10 @@ public class Model{
      */
     public String getPosledniDatumVSouboru(){
         DateTimeFormatter formatter = DateTimeFormat.forPattern("dd. MM. yyyy");
-        return posledniDatum.toString(formatter);
+        if(posledniDatum!=null){
+            return posledniDatum.toString(formatter);
+        }
+        return "";
     }
     
     /**

@@ -146,17 +146,7 @@ class Firma {
         //3 akcie za poslední 3 dny
         ArrayList<Akcie> vybraneAkcie;
         
-        //3 dny od konce časového intervalu
-        LocalDate zacatek;
-        
-        zacatek = konec.minusDays(2);
-        
-        vybraneAkcie = vyberAkcie(zacatek, konec);
-        
-        //v případě, že v období nejsou žádné údaje
-        if(vybraneAkcie.isEmpty()){
-            return 0;
-        }
+        vybraneAkcie = vyberAkcie(konec);
         
         return getPropad3Dny(vybraneAkcie);
     }
@@ -167,19 +157,28 @@ class Firma {
      */
     private double getPropad3Dny(ArrayList<Akcie> vybraneAkcie){
         
-        //součet všech propadů cen akcií v časovém intervalu
-        double suma;
+        //rozdíl poslední a první průměrné ceny 
+        double rozdil;
+        
+        //prvni akcie
+        Akcie prvni = null;
         
         Iterator iterator; 
         
         iterator = vybraneAkcie.iterator();        
-        suma=0;
+        rozdil=0;
         
-        while(iterator.hasNext()){
-            suma += ((Akcie)iterator.next()).getPropad();
+        if(iterator.hasNext()){
+            rozdil += ((Akcie)iterator.next()).getPrumernaCena();
         }
         
-        return suma/vybraneAkcie.size();
+        while(iterator.hasNext()){
+            prvni = (Akcie)iterator.next();
+        }
+        
+        rozdil -= prvni.getPrumernaCena();
+        
+        return -rozdil;
     }
     
     /**
@@ -207,6 +206,26 @@ class Firma {
         
         
         vybraneAkcie.trimToSize();
+        
+        return vybraneAkcie;
+    }
+    
+    /**
+     * Metoda vybere poslední tři akcie od konce intervalu.
+     * (seřazeny budou podle datumu sestupně)
+     * @param konec konec časového rozmnezí
+     * @return seznam akcií v posledních třech pracovních dnech
+     */
+    private ArrayList<Akcie> vyberAkcie(LocalDate konec){
+        
+        //seznam vybraných akcií
+        ArrayList<Akcie> vybraneAkcie = new ArrayList(3);
+        
+        for(LocalDate i=konec;vybraneAkcie.size()<3;i=i.minusDays(1)){
+            if(akcie.containsKey(i.toString())){
+                vybraneAkcie.add(akcie.get(i.toString()));
+            }
+        }
         
         return vybraneAkcie;
     }
