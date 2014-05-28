@@ -79,7 +79,7 @@ public class GUI extends javax.swing.JFrame {
         tabulka = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Kupování akcií");
+        setTitle("Jan Brzobohatý, Michaela Dopitová");
         setMinimumSize(new java.awt.Dimension(600, 500));
 
         denOdText.setColumns(2);

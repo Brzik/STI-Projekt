@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javax.swing.Timer;
 import model.DataException;
 import model.DatumException;
 import model.FatalException;
@@ -24,7 +25,10 @@ public class Controller{
    //začátek a konec období, pro které chceme data
    LocalDate zacatekObdobi;
    LocalDate konecObdobi;
-    
+   
+   //časovač pro kontrolu aktualizace
+   Timer timer;
+   
    public Controller(Model model, GUI view) {
         this.model = model;
         this.view = view;
@@ -41,6 +45,10 @@ public class Controller{
    public void setVisible(boolean zviditelnit) {
        view.setVisible(zviditelnit);
        aktualizovatData();
+       
+       //spustí se časovač, který bude každých 10 minut kontrolovat jestli je potřeba aktualizace
+       timer = new Timer(600000,new CasovacAktualizaceListener());
+       timer.start();
    }
    
    /**
@@ -99,6 +107,20 @@ public class Controller{
     */
    private void zobrazDatumAktualizace(){
        //zda je soubor aktualni
+       boolean aktualni;
+       
+       aktualni = isAktualni();
+       
+       view.zobrazDatumAktualizace(model.getPosledniDatumVSouboru(),aktualni);
+   }
+   
+   /*
+    * Ověří, jestli jsou data aktuální. (Pokud ještě nebylo 20:15, tak data 
+    * jsou aktuální, pokud byl soubor stažen dnes před 20:15 nebo včera po 20:15. 
+    * V případě, že je po 20:15, tak musí být soubor stažen dnes po 20:15.)
+   */
+   private boolean isAktualni(){
+       //zda je soubor aktualni
        boolean aktualni = true;
        
        //datum poslední aktualizace dat
@@ -113,11 +135,6 @@ public class Controller{
            view.zobrazChybu(ex.getMessage());
        }
        
-       /*
-        * Ověří, jestli jsou data aktuální. (Pokud ještě nebylo 20:15, tak data 
-        * jsou aktuální, pokud byl soubor stažen dnes před 20:15 nebo včera po 20:15. 
-        * V případě, že je po 20:15, tak musí být soubor stažen dnes po 20:15.)
-        */
        if(datumAktualizace==null){
            aktualni=false;
        }else{
@@ -144,8 +161,7 @@ public class Controller{
               aktualni=false;
            }
        }
-       
-       view.zobrazDatumAktualizace(model.getPosledniDatumVSouboru(),aktualni);
+       return aktualni;
    }
    
    /**
@@ -222,11 +238,28 @@ public class Controller{
         }
    }
    
+   /**
+    * Nové vlákno pro aktualizaci.
+    */
    public class AktualizaceThread implements Runnable {
 
         @Override
         public void run() {
             aktualizovatData();
         }
-    }
+   }
+   
+   /**
+    * Zkontroluje potřebu aktualizace a případně aktualizuje.
+    */
+   public class CasovacAktualizaceListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent tick) {
+            if(!isAktualni()){
+                (new Thread(new AktualizaceThread())).start();
+                
+            }
+        }
+   }
 }
